@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include <string>
+#include <vector>
 
 class MusicPlayer {
 public:
@@ -12,6 +13,7 @@ public:
     MusicPlayer& operator=(const MusicPlayer&) = delete;
 
     void start_song(const std::string& path);
+    void play_sfx(const std::string& path);
     void stop();
     void update();
     void set_pitch(float pitch);
@@ -21,4 +23,5 @@ private:
     Music music_{};
     bool playing_ = false;
     std::string current_path_;
+    std::vector<Sound> active_sfx_;
 };

@@ -2,6 +2,11 @@
 
 MusicPlayer::~MusicPlayer() {
     stop();
+    for (Sound& s : active_sfx_) {
+        StopSound(s);
+        UnloadSound(s);
+    }
+    active_sfx_.clear();
 }
 
 void MusicPlayer::start_song(const std::string& path) {
@@ -20,6 +25,17 @@ void MusicPlayer::start_song(const std::string& path) {
     }
 }
 
+void MusicPlayer::play_sfx(const std::string& path) {
+    if (path.empty()) {
+        return;
+    }
+    Sound s = LoadSound(path.c_str());
+    if (s.frameCount > 0) {
+        PlaySound(s);
+        active_sfx_.push_back(s);
+    }
+}
+
 void MusicPlayer::stop() {
     if (playing_) {
         StopMusicStream(music_);
@@ -33,6 +49,14 @@ void MusicPlayer::stop() {
 void MusicPlayer::update() {
     if (playing_) {
         UpdateMusicStream(music_);
+    }
+    for (auto it = active_sfx_.begin(); it != active_sfx_.end();) {
+        if (!IsSoundPlaying(*it)) {
+            UnloadSound(*it);
+            it = active_sfx_.erase(it);
+        } else {
+            ++it;
+        }
     }
 }
 
