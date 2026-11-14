@@ -79,7 +79,20 @@ local function resolve_door(room_name, door_name)
 	return nil, nil
 end
 
+local function update_music(room_name)
+	if room_name == "room_area1" or room_name == "room_area1_2" then
+		music:stop()
+	elseif room_name:match("^room_torhouse") then
+		music:start_song("ref/mus_ruinspiano.ogg")
+		music:set_volume(1.0)
+	else
+		music:start_song("ref/mus_ruins.ogg")
+		music:set_volume(1.0)
+	end
+end
+
 function M.enter(room_name, marker_name)
+	update_music(room_name)
 	local room = OverworldRoom("assets/rooms/" .. room_name .. ".json")
 	local x = (marker_name and marker_name ~= "") and room:marker_x(marker_name) or room:spawn_x()
 	local y = (marker_name and marker_name ~= "") and room:marker_y(marker_name) or room:spawn_y()

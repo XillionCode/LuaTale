@@ -279,15 +279,23 @@ void OverworldRoom::step() {
 
         if (!door_triggered_ && on_door_.isFunction()) {
             const Rectangle hb = target->hitbox();
+            const Rectangle padded{hb.x - 2.0f, hb.y - 2.0f, hb.width + 4.0f, hb.height + 4.0f};
+            bool touching_any = false;
             for (const RoomDoor& door : doors_) {
-                if (CheckCollisionRecs(hb, door.rect)) {
-                    door_triggered_ = true;
-                    auto res = on_door_(door.name);
-                    if (!res) {
-                        std::cerr << "OverworldRoom on_door error: " << res.errorMessage() << '\n';
+                if (CheckCollisionRecs(padded, door.rect)) {
+                    touching_any = true;
+                    if (door_armed_) {
+                        door_triggered_ = true;
+                        auto res = on_door_(door.name);
+                        if (!res) {
+                            std::cerr << "OverworldRoom on_door error: " << res.errorMessage() << '\n';
+                        }
                     }
                     break;
                 }
+            }
+            if (!touching_any) {
+                door_armed_ = true;
             }
         }
     }

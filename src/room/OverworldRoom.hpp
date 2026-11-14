@@ -78,6 +78,7 @@ private:
     std::unordered_map<std::string, Vector2> markers_;
     std::weak_ptr<PlayerEntity> follow_target_;
     luabridge::LuaRef on_door_{nullptr};
+    bool door_armed_ = false;
     bool door_triggered_ = false;
     float room_width_ = 320.0f;
     float room_height_ = 240.0f;
