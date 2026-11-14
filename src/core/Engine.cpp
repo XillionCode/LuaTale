@@ -12,6 +12,7 @@ Engine::Engine() {
     constexpr int kHeight = 480;
     constexpr int kTargetFps = 30;
 
+    SetTraceLogLevel(LOG_WARNING);
     InitWindow(kWidth, kHeight, "UNDERTALE");
     InitAudioDevice();
     SetTargetFPS(kTargetFps);
@@ -49,6 +50,20 @@ void Engine::set_title(const std::string& title) {
 
 void Engine::set_language(const std::string& lang) {
     language_ = lang;
+}
+
+void Engine::set_log_level(const std::string& level) {
+    static const std::pair<const char*, int> levels[] = {
+        {"all", LOG_ALL},       {"trace", LOG_TRACE},   {"debug", LOG_DEBUG},
+        {"info", LOG_INFO},     {"warn", LOG_WARNING},  {"warning", LOG_WARNING},
+        {"error", LOG_ERROR},   {"fatal", LOG_FATAL},   {"none", LOG_NONE},
+    };
+    for (const auto& [name, val] : levels) {
+        if (level == name) {
+            SetTraceLogLevel(val);
+            return;
+        }
+    }
 }
 
 const std::string& Engine::language() const {

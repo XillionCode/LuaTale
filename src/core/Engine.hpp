@@ -20,6 +20,7 @@ public:
     void set_room(std::shared_ptr<Room> room);
     void set_title(const std::string& title);
     void set_language(const std::string& lang);
+    void set_log_level(const std::string& level);
     const std::string& language() const;
     std::string get_text(const std::string& key) const;
     void quit();
