@@ -28,6 +28,7 @@ public:
     void set_centered(bool centered);
     void set_spacing(float hspace, float vspace);
     void set_pos(float x, float y);
+    void set_rotation(float rotation);
     void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set_text(const std::string& text);
 
@@ -35,6 +36,7 @@ private:
     std::string text_;
     float x_ = 0.0f;
     float y_ = 0.0f;
+    float rotation_ = 0.0f;
     float font_size_ = 32.0f;
     int steps_per_char_ = 2;
     int step_counter_ = 0;

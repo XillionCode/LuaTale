@@ -65,7 +65,7 @@ void TextEntity::draw() {
 
     std::string visible = text_.substr(0, visible_chars_);
     if (bitmap_font_.is_loaded()) {
-        bitmap_font_.draw_text(visible, x_, y_, font_size_ / 16.0f, hspace_, vspace_, centered_, false, color_);
+        bitmap_font_.draw_text(visible, x_, y_, font_size_ / 16.0f, hspace_, vspace_, centered_, false, color_, rotation_);
         return;
     }
 
@@ -96,6 +96,10 @@ void TextEntity::set_spacing(float hspace, float vspace) {
 void TextEntity::set_pos(float x, float y) {
     x_ = x;
     y_ = y;
+}
+
+void TextEntity::set_rotation(float rotation) {
+    rotation_ = rotation;
 }
 
 void TextEntity::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
