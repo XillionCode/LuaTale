@@ -4,6 +4,7 @@ local M = {}
 
 local function go_to_title()
 	music:stop()
+	music:play_sfx("ref/mus_intronoise.ogg")
 	local title = RoomCutscene(
 		"assets/Sprites/spr_undertaletitle_0.png",
 		0,
@@ -11,16 +12,23 @@ local function go_to_title()
 		2.0,
 		0,
 		0,
-		0.05,
+		1.0,
 		"",
 		0,
 		0,
 		"",
 		"",
-		-1,
+		600,
 		menu.go_to_menu,
-		nil
+		menu.go_to_menu
 	)
+	title:on_delay(100, function()
+		local prompt = TextEntity(engine:get_text("title_press_button_pc"), 320, 360, "fnt_small", "", 32, 1)
+		prompt:set_centered(true)
+		prompt:set_color(128, 128, 128, 255)
+		prompt:skip()
+		title:add_entity(prompt)
+	end)
 	title:set_debug(DEBUG_MODE)
 	engine:set_room(title)
 end
