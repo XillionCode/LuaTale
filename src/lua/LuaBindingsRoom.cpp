@@ -3,6 +3,7 @@
 #include "entity/ImageEntity.hpp"
 #include "room/MenuRoom.hpp"
 #include "menu/OptionMenu.hpp"
+#include "room/OverworldRoom.hpp"
 #include "room/Room.hpp"
 #include "room/RoomCutscene.hpp"
 #include "entity/TextEntity.hpp"
@@ -17,6 +18,7 @@ void register_room_bindings(lua_State* lua) {
         .beginClass<Room>("Room")
         .addConstructorFrom<std::shared_ptr<Room>, void()>()
         .addFunction("add_entity", &Room::add_entity)
+        .addFunction("on_delay", &Room::on_delay)
         .endClass()
         .deriveClass<RoomCutscene, Room>("RoomCutscene")
         .addConstructorFrom<std::shared_ptr<RoomCutscene>,
@@ -31,5 +33,8 @@ void register_room_bindings(lua_State* lua) {
         .addConstructorFrom<std::shared_ptr<MenuRoom>, void(float, float, float, float, const std::string&)>()
         .addFunction("add_option", &MenuRoom::add_option)
         .addFunction("menu", &MenuRoom::menu)
+        .endClass()
+        .deriveClass<OverworldRoom, Room>("OverworldRoom")
+        .addConstructorFrom<std::shared_ptr<OverworldRoom>, void(const std::string&)>()
         .endClass();
 }
