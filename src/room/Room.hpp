@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lua.hpp>
+#include <LuaBridge/LuaBridge.h>
 #include <memory>
 #include <vector>
 
@@ -11,10 +13,17 @@ public:
     virtual ~Room();
 
     void add_entity(std::shared_ptr<Entity> entity);
+    void on_delay(int frames, luabridge::LuaRef callback);
 
     virtual void step();
     virtual void draw();
 
 protected:
+    struct DelayTimer {
+        int remaining_frames = 0;
+        luabridge::LuaRef callback;
+    };
+
     std::vector<std::shared_ptr<Entity>> entities_;
+    std::vector<DelayTimer> timers_;
 };
