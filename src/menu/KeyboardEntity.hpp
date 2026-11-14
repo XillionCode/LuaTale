@@ -1,7 +1,7 @@
 #pragma once
 
-#include "BitmapFont.hpp"
-#include "Entity.hpp"
+#include "font/BitmapFont.hpp"
+#include "entity/Entity.hpp"
 #include "KeyboardLayout.hpp"
 
 #include <lua.hpp>

@@ -1,7 +1,7 @@
 #include "LuaBindings.hpp"
-#include "Engine.hpp"
-#include "MusicPlayer.hpp"
-#include "Room.hpp"
+#include "core/Engine.hpp"
+#include "core/MusicPlayer.hpp"
+#include "room/Room.hpp"
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>

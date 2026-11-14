@@ -1,5 +1,5 @@
 #include "MenuRoom.hpp"
-#include "OptionMenu.hpp"
+#include "menu/OptionMenu.hpp"
 
 #include <utility>
 

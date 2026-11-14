@@ -1,6 +1,6 @@
 #include "RoomCutscene.hpp"
-#include "ImageEntity.hpp"
-#include "TextEntity.hpp"
+#include "entity/ImageEntity.hpp"
+#include "entity/TextEntity.hpp"
 
 #include <raylib.h>
 #include <iostream>

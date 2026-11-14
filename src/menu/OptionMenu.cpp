@@ -1,5 +1,5 @@
 #include "OptionMenu.hpp"
-#include "TextEntity.hpp"
+#include "entity/TextEntity.hpp"
 
 #include <raylib.h>
 #include <iostream>

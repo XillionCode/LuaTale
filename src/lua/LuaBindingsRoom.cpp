@@ -1,11 +1,11 @@
 #include "LuaBindings.hpp"
-#include "Entity.hpp"
-#include "ImageEntity.hpp"
-#include "MenuRoom.hpp"
-#include "OptionMenu.hpp"
-#include "Room.hpp"
-#include "RoomCutscene.hpp"
-#include "TextEntity.hpp"
+#include "entity/Entity.hpp"
+#include "entity/ImageEntity.hpp"
+#include "room/MenuRoom.hpp"
+#include "menu/OptionMenu.hpp"
+#include "room/Room.hpp"
+#include "room/RoomCutscene.hpp"
+#include "entity/TextEntity.hpp"
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>

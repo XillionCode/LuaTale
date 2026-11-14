@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EntityGroup.hpp"
+#include "entity/EntityGroup.hpp"
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>

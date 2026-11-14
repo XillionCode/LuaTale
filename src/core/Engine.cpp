@@ -1,6 +1,6 @@
 #include "Engine.hpp"
-#include "LuaBindings.hpp"
-#include "Room.hpp"
+#include "lua/LuaBindings.hpp"
+#include "room/Room.hpp"
 
 #include <raylib.h>
 #include <lua.hpp>

@@ -1,5 +1,5 @@
 #include "Room.hpp"
-#include "Entity.hpp"
+#include "entity/Entity.hpp"
 
 #include <raylib.h>
 #include <utility>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BitmapFont.hpp"
+#include "font/BitmapFont.hpp"
 #include "Entity.hpp"
 
 #include <raylib.h>

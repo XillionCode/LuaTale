@@ -1,6 +1,6 @@
 #include "SoulListMenu.hpp"
-#include "MenuSoul.hpp"
-#include "TextEntity.hpp"
+#include "entity/MenuSoul.hpp"
+#include "entity/TextEntity.hpp"
 
 #include <raylib.h>
 #include <iostream>
