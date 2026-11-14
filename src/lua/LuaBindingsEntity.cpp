@@ -1,4 +1,5 @@
 #include "LuaBindings.hpp"
+#include "entity/BattleSoul.hpp"
 #include "entity/Entity.hpp"
 #include "entity/EntityGroup.hpp"
 #include "entity/FadeOverlayEntity.hpp"
@@ -6,6 +7,8 @@
 #include "menu/KeyboardEntity.hpp"
 #include "entity/MenuSoul.hpp"
 #include "menu/OptionMenu.hpp"
+#include "entity/OverworldFrisk.hpp"
+#include "entity/PlayerEntity.hpp"
 #include "entity/Soul.hpp"
 #include "menu/SoulHorMenu.hpp"
 #include "menu/SoulListMenu.hpp"
@@ -88,5 +91,17 @@ void register_entity_bindings(lua_State* lua) {
         .deriveClass<FadeOverlayEntity, Entity>("FadeOverlayEntity")
         .addConstructorFrom<std::shared_ptr<FadeOverlayEntity>,
                             void(unsigned char, unsigned char, unsigned char, float)>()
+        .endClass()
+        .deriveClass<PlayerEntity, Entity>("PlayerEntity")
+        .addFunction("set_pos", &PlayerEntity::set_pos)
+        .addFunction("set_bounds", &PlayerEntity::set_bounds)
+        .addFunction("x", &PlayerEntity::x)
+        .addFunction("y", &PlayerEntity::y)
+        .endClass()
+        .deriveClass<OverworldFrisk, PlayerEntity>("OverworldFrisk")
+        .addConstructorFrom<std::shared_ptr<OverworldFrisk>, void(float, float)>()
+        .endClass()
+        .deriveClass<BattleSoul, PlayerEntity>("BattleSoul")
+        .addConstructorFrom<std::shared_ptr<BattleSoul>, void(float, float)>()
         .endClass();
 }

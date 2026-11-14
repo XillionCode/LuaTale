@@ -4,6 +4,7 @@
 #include "room/MenuRoom.hpp"
 #include "menu/OptionMenu.hpp"
 #include "room/OverworldRoom.hpp"
+#include "entity/PlayerEntity.hpp"
 #include "room/Room.hpp"
 #include "room/RoomCutscene.hpp"
 #include "entity/TextEntity.hpp"
@@ -36,5 +37,10 @@ void register_room_bindings(lua_State* lua) {
         .endClass()
         .deriveClass<OverworldRoom, Room>("OverworldRoom")
         .addConstructorFrom<std::shared_ptr<OverworldRoom>, void(const std::string&)>()
+        .addFunction("set_follow", &OverworldRoom::set_follow)
+        .addFunction("spawn_x", &OverworldRoom::spawn_x)
+        .addFunction("spawn_y", &OverworldRoom::spawn_y)
+        .addFunction("width", &OverworldRoom::width)
+        .addFunction("height", &OverworldRoom::height)
         .endClass();
 }
