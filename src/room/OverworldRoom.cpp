@@ -1,8 +1,11 @@
 #include "OverworldRoom.hpp"
 #include "entity/Entity.hpp"
+#include "entity/PlayerEntity.hpp"
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
+#include <unordered_map>
 #include <yyjson.h>
 
 namespace {
@@ -13,6 +16,65 @@ Color unpack_gm_color(uint32_t argb) {
     unsigned char g = static_cast<unsigned char>((argb >> 8) & 0xFF);
     unsigned char r = static_cast<unsigned char>(argb & 0xFF);
     return Color{r, g, b, a};
+}
+
+Vector2 load_sprite_size(const std::string& sprite, std::unordered_map<std::string, Vector2>& cache) {
+    auto it = cache.find(sprite);
+    if (it != cache.end()) {
+        return it->second;
+    }
+    std::string path = "assets/Sprites/" + sprite + "_0.png";
+    Image img = LoadImage(path.c_str());
+    Vector2 size = img.data ? Vector2{static_cast<float>(img.width), static_cast<float>(img.height)}
+                            : Vector2{20.0f, 20.0f};
+    if (img.data) {
+        UnloadImage(img);
+    }
+    cache[sprite] = size;
+    return size;
+}
+
+std::unordered_map<std::string, std::string> load_object_sprites(const char* path) {
+    std::unordered_map<std::string, std::string> map;
+    yyjson_doc* doc = yyjson_read_file(path, 0, nullptr, nullptr);
+    if (!doc) {
+        return map;
+    }
+    yyjson_val* root = yyjson_doc_get_root(doc);
+    if (yyjson_is_arr(root)) {
+        size_t idx = 0;
+        size_t max = 0;
+        yyjson_val* item = nullptr;
+        yyjson_arr_foreach(root, idx, max, item) {
+            const char* name = yyjson_get_str(yyjson_obj_get(item, "name"));
+            const char* spr = yyjson_get_str(yyjson_obj_get(item, "sprite"));
+            if (name && spr) {
+                map[name] = spr;
+            }
+        }
+    }
+    yyjson_doc_free(doc);
+    return map;
+}
+
+bool collides_slope(const Rectangle& hb, const SlopeWall& s) {
+    if (!CheckCollisionRecs(hb, s.rect)) {
+        return false;
+    }
+    const float rx = s.rect.x;
+    const float ry = s.rect.y;
+    const float rw = s.rect.width;
+    switch (s.type) {
+        case SlopeWall::SUL:
+            return (hb.x - rx) + (hb.y - ry) < rw;
+        case SlopeWall::SUR:
+            return (hb.y - ry) < (hb.x + hb.width - rx);
+        case SlopeWall::SDL:
+            return (hb.x - rx) < (hb.y + hb.height - ry);
+        case SlopeWall::SDR:
+            return (hb.x + hb.width - rx) + (hb.y + hb.height - ry) > rw;
+    }
+    return false;
 }
 
 }  // namespace
@@ -88,6 +150,51 @@ bool OverworldRoom::load_room(const std::string& json_path) {
         }
     }
 
+    auto obj_sprites = load_object_sprites("assets/objects.json");
+    std::unordered_map<std::string, Vector2> size_cache;
+
+    yyjson_val* instances = yyjson_obj_get(root, "instances");
+    if (yyjson_is_arr(instances)) {
+        size_t idx = 0;
+        size_t max = 0;
+        yyjson_val* item = nullptr;
+        yyjson_arr_foreach(instances, idx, max, item) {
+            const char* obj = yyjson_get_str(yyjson_obj_get(item, "objectDefinition"));
+            if (!obj) {
+                continue;
+            }
+            const float x = static_cast<float>(yyjson_get_num(yyjson_obj_get(item, "x")));
+            const float y = static_cast<float>(yyjson_get_num(yyjson_obj_get(item, "y")));
+            const float sx = static_cast<float>(yyjson_get_num(yyjson_obj_get(item, "scaleX")));
+            const float sy = static_cast<float>(yyjson_get_num(yyjson_obj_get(item, "scaleY")));
+
+            if (std::strcmp(obj, "obj_mainchara") == 0) {
+                spawn_x_ = x;
+                spawn_y_ = y;
+                continue;
+            }
+
+            auto spr_it = obj_sprites.find(obj);
+            const std::string& spr = (spr_it != obj_sprites.end()) ? spr_it->second : std::string();
+            const Vector2 base = spr.empty() ? Vector2{20.0f, 20.0f} : load_sprite_size(spr, size_cache);
+            const Rectangle rect{x, y, base.x * sx, base.y * sy};
+
+            if (std::strcmp(obj, "obj_solidsmall") == 0 ||
+                std::strcmp(obj, "obj_solidlong") == 0 ||
+                std::strcmp(obj, "obj_solidtall") == 0) {
+                solid_walls_.push_back(rect);
+            } else if (std::strcmp(obj, "obj_sul") == 0) {
+                slope_walls_.push_back({SlopeWall::SUL, rect});
+            } else if (std::strcmp(obj, "obj_sur") == 0) {
+                slope_walls_.push_back({SlopeWall::SUR, rect});
+            } else if (std::strcmp(obj, "obj_sdl") == 0) {
+                slope_walls_.push_back({SlopeWall::SDL, rect});
+            } else if (std::strcmp(obj, "obj_sdr") == 0) {
+                slope_walls_.push_back({SlopeWall::SDR, rect});
+            }
+        }
+    }
+
     yyjson_doc_free(doc);
 
     std::stable_sort(tiles_.begin(), tiles_.end(), [](const RoomTile& a, const RoomTile& b) {
@@ -96,27 +203,55 @@ bool OverworldRoom::load_room(const std::string& json_path) {
     return true;
 }
 
+void OverworldRoom::set_follow(std::shared_ptr<PlayerEntity> target) {
+    follow_target_ = target;
+    if (target) {
+        target->set_bounds(room_width_, room_height_);
+        target->set_collider([this](Rectangle hb) { return collides(hb); });
+    }
+}
+
+bool OverworldRoom::collides(Rectangle hitbox) const {
+    for (const Rectangle& wall : solid_walls_) {
+        if (CheckCollisionRecs(hitbox, wall)) {
+            return true;
+        }
+    }
+    for (const SlopeWall& slope : slope_walls_) {
+        if (collides_slope(hitbox, slope)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+float OverworldRoom::spawn_x() const {
+    return spawn_x_;
+}
+
+float OverworldRoom::spawn_y() const {
+    return spawn_y_;
+}
+
+float OverworldRoom::width() const {
+    return room_width_;
+}
+
+float OverworldRoom::height() const {
+    return room_height_;
+}
+
 void OverworldRoom::step() {
     Room::step();
 
-    const float pan_speed = 4.0f;
-    if (IsKeyDown(KEY_RIGHT)) {
-        camera_.target.x += pan_speed;
+    if (auto target = follow_target_.lock()) {
+        const float cx = target->x() + target->width() * 0.5f;
+        const float cy = target->y() + target->height() * 0.5f;
+        const float max_x = std::max(0.0f, room_width_ - 320.0f);
+        const float max_y = std::max(0.0f, room_height_ - 240.0f);
+        camera_.target.x = std::clamp(cx - 160.0f, 0.0f, max_x);
+        camera_.target.y = std::clamp(cy - 120.0f, 0.0f, max_y);
     }
-    if (IsKeyDown(KEY_LEFT)) {
-        camera_.target.x -= pan_speed;
-    }
-    if (IsKeyDown(KEY_DOWN)) {
-        camera_.target.y += pan_speed;
-    }
-    if (IsKeyDown(KEY_UP)) {
-        camera_.target.y -= pan_speed;
-    }
-
-    const float max_x = std::max(0.0f, room_width_ - 320.0f);
-    const float max_y = std::max(0.0f, room_height_ - 240.0f);
-    camera_.target.x = std::clamp(camera_.target.x, 0.0f, max_x);
-    camera_.target.y = std::clamp(camera_.target.y, 0.0f, max_y);
 }
 
 void OverworldRoom::draw_background_layer(const RoomBackground& layer) {

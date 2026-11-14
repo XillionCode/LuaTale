@@ -3,9 +3,12 @@
 #include "BackgroundAtlas.hpp"
 #include "Room.hpp"
 
+#include <memory>
 #include <raylib.h>
 #include <string>
 #include <vector>
+
+class PlayerEntity;
 
 struct RoomBackground {
     bool foreground = false;
@@ -30,6 +33,12 @@ struct RoomTile {
     Color tint = WHITE;
 };
 
+struct SlopeWall {
+    enum Type { SUL, SUR, SDL, SDR };
+    Type type = SUL;
+    Rectangle rect{};
+};
+
 class OverworldRoom : public Room {
 public:
     explicit OverworldRoom(const std::string& json_path);
@@ -38,6 +47,13 @@ public:
     void step() override;
     void draw() override;
 
+    void set_follow(std::shared_ptr<PlayerEntity> target);
+    bool collides(Rectangle hitbox) const;
+    float spawn_x() const;
+    float spawn_y() const;
+    float width() const;
+    float height() const;
+
 private:
     bool load_room(const std::string& json_path);
     void draw_background_layer(const RoomBackground& layer);
@@ -45,7 +61,12 @@ private:
     BackgroundAtlas atlas_;
     std::vector<RoomBackground> backgrounds_;
     std::vector<RoomTile> tiles_;
+    std::vector<Rectangle> solid_walls_;
+    std::vector<SlopeWall> slope_walls_;
+    std::weak_ptr<PlayerEntity> follow_target_;
     float room_width_ = 320.0f;
     float room_height_ = 240.0f;
+    float spawn_x_ = 0.0f;
+    float spawn_y_ = 0.0f;
     Camera2D camera_{};
 };
