@@ -64,7 +64,8 @@ void BitmapFont::draw_text(const std::string& text,
                            float vspace,
                            bool centered,
                            bool shake,
-                           Color color) const {
+                           Color color,
+                           float rotation) const {
     if (!loaded_) {
         return;
     }
@@ -101,8 +102,9 @@ void BitmapFont::draw_text(const std::string& text,
                 float dx = shake ? static_cast<float>(GetRandomValue(-1, 1)) : 0.0f;
                 float dy = shake ? static_cast<float>(GetRandomValue(-1, 1)) : 0.0f;
                 Rectangle src{g.src_x, g.src_y, g.src_w, g.src_h};
-                Rectangle dst{cursor_x + g.offset * scale + dx, cursor_y + dy, g.src_w * scale, g.src_h * scale};
-                DrawTexturePro(texture_, src, dst, Vector2{0.0f, 0.0f}, 0.0f, color);
+                Rectangle dst{x, y, g.src_w * scale, g.src_h * scale};
+                Vector2 origin{-(cursor_x + g.offset * scale + dx - x), -(cursor_y + dy - y)};
+                DrawTexturePro(texture_, src, dst, origin, rotation, color);
                 cursor_x += (hspace > 0.0f) ? hspace : (g.shift * scale);
             }
         }

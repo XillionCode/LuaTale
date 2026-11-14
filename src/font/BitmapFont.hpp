@@ -26,7 +26,8 @@ public:
                    float vspace,
                    bool centered,
                    bool shake,
-                   Color color) const;
+                   Color color,
+                   float rotation = 0.0f) const;
 
 private:
     Texture2D texture_{};
