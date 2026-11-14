@@ -179,10 +179,12 @@ bool OverworldRoom::load_room(const std::string& json_path) {
             const Vector2 base = spr.empty() ? Vector2{20.0f, 20.0f} : load_sprite_size(spr, size_cache);
             const Rectangle rect{x, y, base.x * sx, base.y * sy};
 
-            if (std::strcmp(obj, "obj_solidsmall") == 0 ||
-                std::strcmp(obj, "obj_solidlong") == 0 ||
-                std::strcmp(obj, "obj_solidtall") == 0) {
+            if (std::strcmp(obj, "obj_solidsmall") == 0) {
                 solid_walls_.push_back(rect);
+            } else if (std::strcmp(obj, "obj_solidlong") == 0) {
+                solid_walls_.push_back(Rectangle{rect.x, rect.y, rect.width * 400.0f, rect.height});
+            } else if (std::strcmp(obj, "obj_solidtall") == 0) {
+                solid_walls_.push_back(Rectangle{rect.x, rect.y, rect.width, rect.height * 400.0f});
             } else if (std::strcmp(obj, "obj_sul") == 0) {
                 slope_walls_.push_back({SlopeWall::SUL, rect});
             } else if (std::strcmp(obj, "obj_sur") == 0) {
