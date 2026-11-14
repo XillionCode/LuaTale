@@ -1,4 +1,5 @@
 local naming = require("scripts.naming")
+local ruins = require("scripts.ruins")
 
 local M = {}
 
@@ -76,11 +77,7 @@ function M.go_to_menu()
 	vert:add_option(engine:get_text("instructions_begin"), function()
 		naming.start("", M.go_to_menu, function()
 			music:stop()
-			local room = OverworldRoom("assets/rooms/room_area1.json")
-			local frisk = OverworldFrisk(room:spawn_x(), room:spawn_y())
-			room:add_entity(frisk)
-			room:set_follow(frisk)
-			engine:set_room(room)
+			ruins.enter("room_area1")
 		end)
 	end)
 	vert:add_option(engine:get_text("settings_name"), function()
