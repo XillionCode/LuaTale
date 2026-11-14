@@ -27,10 +27,13 @@ local RUINS_ORDER = {
 	"room_ruins15E",
 	"room_ruins16",
 	"room_ruins17",
+	"room_ruins18OLD",
 	"room_ruins19",
 	"room_torhouse1",
 	"room_torhouse2",
 	"room_torhouse3",
+	"room_torielroom",
+	"room_asrielroom",
 	"room_basement1",
 	"room_basement2",
 	"room_basement3",
@@ -52,7 +55,9 @@ local SPECIAL_DOORS = {
 	room_ruins19   = { obj_door_ruins13 = { room = "room_ruins16",   marker = "obj_markerX" } },
 	room_torhouse1 = { obj_door_ruins13 = { room = "room_basement1", marker = "obj_markerX" } },
 	room_basement1 = { obj_door_ruins13 = { room = "room_torhouse1", marker = "obj_markerX" } },
-	room_torhouse2 = { obj_door_ruins13 = { room = "room_torhouse1", marker = "obj_markerX" } },
+	room_torhouse2 = { obj_door_ruins13 = { room = "room_kitchen",   marker = "obj_markerX" } },
+	room_kitchen   = { obj_door_ruins13 = { room = "room_torhouse2", marker = "obj_markerX" } },
+	room_basement4 = { obj_finaldoor    = { room = "room_basement5", marker = "obj_markerA" } },
 	room_ruinsexit = { obj_demodoorA    = { room = "room_area1",     marker = "" } },
 }
 
@@ -82,7 +87,10 @@ end
 local function update_music(room_name)
 	if room_name == "room_area1" or room_name == "room_area1_2" then
 		music:stop()
-	elseif room_name:match("^room_torhouse") then
+	elseif room_name:match("^room_torhouse") or
+	       room_name == "room_torielroom" or
+	       room_name == "room_asrielroom" or
+	       room_name == "room_kitchen" then
 		music:start_song("ref/mus_ruinspiano.ogg")
 		music:set_volume(1.0)
 	else
