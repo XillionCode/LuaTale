@@ -278,11 +278,10 @@ void OverworldRoom::step() {
         camera_.target.y = std::clamp(cy - 120.0f, 0.0f, max_y);
 
         if (!door_triggered_ && on_door_.isFunction()) {
-            const Rectangle hb = target->hitbox();
-            const Rectangle padded{hb.x - 2.0f, hb.y - 2.0f, hb.width + 4.0f, hb.height + 4.0f};
+            const Rectangle hb = target->attempted_hitbox();
             bool touching_any = false;
             for (const RoomDoor& door : doors_) {
-                if (CheckCollisionRecs(padded, door.rect)) {
+                if (CheckCollisionRecs(hb, door.rect)) {
                     touching_any = true;
                     if (door_armed_) {
                         door_triggered_ = true;
