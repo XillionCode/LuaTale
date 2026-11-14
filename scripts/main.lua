@@ -1,4 +1,5 @@
 DEBUG_MODE = true
+engine:set_log_level("warn")
 
 music:start_song("ref/mus_story.ogg")
 music:set_pitch(0.91)
