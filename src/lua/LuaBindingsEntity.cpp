@@ -1,6 +1,7 @@
 #include "LuaBindings.hpp"
 #include "entity/Entity.hpp"
 #include "entity/EntityGroup.hpp"
+#include "entity/FadeOverlayEntity.hpp"
 #include "entity/ImageEntity.hpp"
 #include "menu/KeyboardEntity.hpp"
 #include "entity/MenuSoul.hpp"
@@ -80,7 +81,12 @@ void register_entity_bindings(lua_State* lua) {
         .addFunction("set_centered", &TextEntity::set_centered)
         .addFunction("set_spacing", &TextEntity::set_spacing)
         .addFunction("set_pos", &TextEntity::set_pos)
+        .addFunction("set_rotation", &TextEntity::set_rotation)
         .addFunction("set_color", &TextEntity::set_color)
         .addFunction("set_text", &TextEntity::set_text)
+        .endClass()
+        .deriveClass<FadeOverlayEntity, Entity>("FadeOverlayEntity")
+        .addConstructorFrom<std::shared_ptr<FadeOverlayEntity>,
+                            void(unsigned char, unsigned char, unsigned char, float)>()
         .endClass();
 }

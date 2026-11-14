@@ -54,10 +54,49 @@ local function check_name(name)
 	return true, format_text("name_entry_confirm")
 end
 
+local function start_name_anim(room, preview, state)
+	local base_x, base_y = 280, 120
+	local r = 0.5
+	local function tick()
+		if state.q < 120 then
+			state.q = state.q + 1
+		end
+		local rx = math.random() * r * 4
+		local ry = math.random() * r * 4
+		local xx = base_x - (state.q * 2 / 3) + rx
+		local yy = base_y + state.q + ry
+		local scale = 1 + (state.q / 50)
+		local angle = (math.random() * 2 - 1) * ((r * state.q) / 60)
+		preview:set_pos(xx, yy)
+		preview:set_font_size(32 * scale)
+		preview:set_rotation(angle)
+		room:on_delay(1, tick)
+	end
+	room:on_delay(1, tick)
+end
+
+local function start_accept_transition(name, font, state, on_accept)
+	music:stop()
+	music:play_sfx("ref/mus_cymbal.ogg")
+
+	local room = Room()
+	local preview = TextEntity(name, 280, 120, font, "", 32, 1)
+	preview:skip()
+	room:add_entity(preview)
+	room:add_entity(FadeOverlayEntity(255, 255, 255, 0.006))
+
+	start_name_anim(room, preview, state)
+	room:on_delay(180, function()
+		on_accept(name)
+	end)
+	engine:set_room(room)
+end
+
 function M.show_confirm(name, back_to_keyboard, on_accept)
 	local room = Room()
 	local font = active_font()
 	local allow, msg = check_name(name)
+	local state = { q = 0 }
 
 	local prompt = TextEntity(msg, 180, 60, font, "", 32, 1)
 	prompt:skip()
@@ -66,6 +105,7 @@ function M.show_confirm(name, back_to_keyboard, on_accept)
 	local preview = TextEntity(name, 280, 120, font, "", 32, 1)
 	preview:skip()
 	room:add_entity(preview)
+	start_name_anim(room, preview, state)
 
 	local choice = SoulHorMenu(160, 400, 320, -28, font, true)
 	if allow then
@@ -73,7 +113,7 @@ function M.show_confirm(name, back_to_keyboard, on_accept)
 			back_to_keyboard(name)
 		end)
 		choice:add_option(format_text("yes"), function()
-			on_accept(name)
+			start_accept_transition(name, font, state, on_accept)
 		end)
 	else
 		choice:add_option(format_text("name_entry_goback"), function()
