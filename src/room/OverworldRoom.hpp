@@ -3,9 +3,12 @@
 #include "BackgroundAtlas.hpp"
 #include "Room.hpp"
 
+#include <lua.hpp>
+#include <LuaBridge/LuaBridge.h>
 #include <memory>
 #include <raylib.h>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 class PlayerEntity;
@@ -39,6 +42,11 @@ struct SlopeWall {
     Rectangle rect{};
 };
 
+struct RoomDoor {
+    std::string name;
+    Rectangle rect{};
+};
+
 class OverworldRoom : public Room {
 public:
     explicit OverworldRoom(const std::string& json_path);
@@ -48,7 +56,10 @@ public:
     void draw() override;
 
     void set_follow(std::shared_ptr<PlayerEntity> target);
+    void on_door(luabridge::LuaRef callback);
     bool collides(Rectangle hitbox) const;
+    float marker_x(const std::string& name) const;
+    float marker_y(const std::string& name) const;
     float spawn_x() const;
     float spawn_y() const;
     float width() const;
@@ -63,7 +74,11 @@ private:
     std::vector<RoomTile> tiles_;
     std::vector<Rectangle> solid_walls_;
     std::vector<SlopeWall> slope_walls_;
+    std::vector<RoomDoor> doors_;
+    std::unordered_map<std::string, Vector2> markers_;
     std::weak_ptr<PlayerEntity> follow_target_;
+    luabridge::LuaRef on_door_{nullptr};
+    bool door_triggered_ = false;
     float room_width_ = 320.0f;
     float room_height_ = 240.0f;
     float spawn_x_ = 0.0f;

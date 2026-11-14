@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <unordered_map>
 #include <yyjson.h>
 
@@ -179,7 +180,9 @@ bool OverworldRoom::load_room(const std::string& json_path) {
             const Vector2 base = spr.empty() ? Vector2{20.0f, 20.0f} : load_sprite_size(spr, size_cache);
             const Rectangle rect{x, y, base.x * sx, base.y * sy};
 
-            if (std::strcmp(obj, "obj_solidsmall") == 0) {
+            if (std::strcmp(obj, "obj_solidsmall") == 0 ||
+                std::strcmp(obj, "obj_solidtall_2") == 0 ||
+                std::strcmp(obj, "obj_solidwide") == 0) {
                 solid_walls_.push_back(rect);
             } else if (std::strcmp(obj, "obj_solidlong") == 0) {
                 solid_walls_.push_back(Rectangle{rect.x, rect.y, rect.width * 400.0f, rect.height});
@@ -193,6 +196,12 @@ bool OverworldRoom::load_room(const std::string& json_path) {
                 slope_walls_.push_back({SlopeWall::SDL, rect});
             } else if (std::strcmp(obj, "obj_sdr") == 0) {
                 slope_walls_.push_back({SlopeWall::SDR, rect});
+            } else if (std::strncmp(obj, "obj_door", 8) == 0 ||
+                       std::strcmp(obj, "obj_demodoorA") == 0 ||
+                       std::strcmp(obj, "obj_finaldoor") == 0) {
+                doors_.push_back({obj, rect});
+            } else if (std::strncmp(obj, "obj_marker", 10) == 0) {
+                markers_[obj] = Vector2{x, y};
             }
         }
     }
@@ -211,6 +220,20 @@ void OverworldRoom::set_follow(std::shared_ptr<PlayerEntity> target) {
         target->set_bounds(room_width_, room_height_);
         target->set_collider([this](Rectangle hb) { return collides(hb); });
     }
+}
+
+void OverworldRoom::on_door(luabridge::LuaRef callback) {
+    on_door_ = std::move(callback);
+}
+
+float OverworldRoom::marker_x(const std::string& name) const {
+    auto it = markers_.find(name);
+    return it != markers_.end() ? it->second.x : spawn_x_;
+}
+
+float OverworldRoom::marker_y(const std::string& name) const {
+    auto it = markers_.find(name);
+    return it != markers_.end() ? it->second.y : spawn_y_;
 }
 
 bool OverworldRoom::collides(Rectangle hitbox) const {
@@ -253,6 +276,20 @@ void OverworldRoom::step() {
         const float max_y = std::max(0.0f, room_height_ - 240.0f);
         camera_.target.x = std::clamp(cx - 160.0f, 0.0f, max_x);
         camera_.target.y = std::clamp(cy - 120.0f, 0.0f, max_y);
+
+        if (!door_triggered_ && on_door_.isFunction()) {
+            const Rectangle hb = target->hitbox();
+            for (const RoomDoor& door : doors_) {
+                if (CheckCollisionRecs(hb, door.rect)) {
+                    door_triggered_ = true;
+                    auto res = on_door_(door.name);
+                    if (!res) {
+                        std::cerr << "OverworldRoom on_door error: " << res.errorMessage() << '\n';
+                    }
+                    break;
+                }
+            }
+        }
     }
 }
 
