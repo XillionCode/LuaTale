@@ -20,6 +20,7 @@ public:
     virtual float height() const = 0;
 
     Rectangle hitbox() const;
+    Rectangle attempted_hitbox() const;
 
 protected:
     void set_hitbox(float offset_x, float offset_y, float w, float h);
@@ -28,6 +29,8 @@ protected:
 
     float x_ = 0.0f;
     float y_ = 0.0f;
+    float attempted_x_ = 0.0f;
+    float attempted_y_ = 0.0f;
     float speed_ = 3.0f;
 
     float hb_x_ = 0.0f;

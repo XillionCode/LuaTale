@@ -3,11 +3,13 @@
 #include <algorithm>
 
 PlayerEntity::PlayerEntity(float x, float y, float speed)
-    : x_(x), y_(y), speed_(speed) {}
+    : x_(x), y_(y), attempted_x_(x), attempted_y_(y), speed_(speed) {}
 
 void PlayerEntity::set_pos(float x, float y) {
     x_ = x;
     y_ = y;
+    attempted_x_ = x;
+    attempted_y_ = y;
 }
 
 void PlayerEntity::set_bounds(float max_w, float max_h) {
@@ -38,6 +40,10 @@ float PlayerEntity::y() const {
 
 Rectangle PlayerEntity::hitbox() const {
     return Rectangle{x_ + hb_x_, y_ + hb_y_, hb_w_, hb_h_};
+}
+
+Rectangle PlayerEntity::attempted_hitbox() const {
+    return Rectangle{attempted_x_ + hb_x_, attempted_y_ + hb_y_, hb_w_, hb_h_};
 }
 
 void PlayerEntity::set_hitbox(float offset_x, float offset_y, float w, float h) {

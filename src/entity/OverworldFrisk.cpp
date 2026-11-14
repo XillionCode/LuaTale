@@ -65,6 +65,8 @@ void OverworldFrisk::step() {
 
     const float prev_x = x_;
     const float prev_y = y_;
+    attempted_x_ = x_ + dx * speed_;
+    attempted_y_ = y_ + dy * speed_;
 
     if (dx != 0.0f) {
         float next_x = x_ + dx * speed_;
