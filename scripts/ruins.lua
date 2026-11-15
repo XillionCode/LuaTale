@@ -106,6 +106,7 @@ function M.enter(room_name, marker_name)
 	local y = (marker_name and marker_name ~= "") and room:marker_y(marker_name) or room:spawn_y()
 
 	local frisk = OverworldFrisk(x, y)
+	frisk:set_debug(DEBUG_MODE)
 	room:add_entity(frisk)
 	room:set_follow(frisk)
 	room:on_door(function(door_name)

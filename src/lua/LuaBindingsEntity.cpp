@@ -95,6 +95,7 @@ void register_entity_bindings(lua_State* lua) {
         .deriveClass<PlayerEntity, Entity>("PlayerEntity")
         .addFunction("set_pos", &PlayerEntity::set_pos)
         .addFunction("set_bounds", &PlayerEntity::set_bounds)
+        .addFunction("set_debug", &PlayerEntity::set_debug)
         .addFunction("x", &PlayerEntity::x)
         .addFunction("y", &PlayerEntity::y)
         .endClass()
