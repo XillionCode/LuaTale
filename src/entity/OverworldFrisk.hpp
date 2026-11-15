@@ -17,6 +17,7 @@ public:
 
     float width() const override;
     float height() const override;
+    float depth() const override;
 
 private:
     enum Facing { Down = 0, Right = 1, Up = 2, Left = 3 };

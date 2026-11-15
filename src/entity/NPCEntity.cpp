@@ -137,3 +137,17 @@ void NPCEntity::draw() {
     Rectangle dst{x_, y_, static_cast<float>(tex.width) * scale_, static_cast<float>(tex.height) * scale_};
     DrawTexturePro(tex, src, dst, Vector2{0.0f, 0.0f}, 0.0f, tint_);
 }
+
+float NPCEntity::depth() const {
+    if (has_custom_depth()) {
+        return Entity::depth();
+    }
+    float h = SpriteEntity::height();
+    if (!frames_.empty()) {
+        const Texture2D& tex = frames_[static_cast<std::size_t>(current_frame_)];
+        if (tex.id != 0) {
+            h = static_cast<float>(tex.height) * scale_;
+        }
+    }
+    return -(y_ + h);
+}

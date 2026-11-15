@@ -431,6 +431,9 @@ void OverworldRoom::draw() {
         DrawTexturePro(tex, src, dst, Vector2{0.0f, 0.0f}, 0.0f, tile.tint);
     }
 
+    std::stable_sort(entities_.begin(), entities_.end(), [](const auto& a, const auto& b) {
+        return a->depth() > b->depth();
+    });
     for (std::size_t i = 0; i < entities_.size(); ++i) {
         if (entities_[i]->visible()) {
             entities_[i]->draw();

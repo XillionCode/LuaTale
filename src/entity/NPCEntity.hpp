@@ -17,6 +17,7 @@ public:
 
     void step() override;
     void draw() override;
+    float depth() const override;
 
     void add_frame(const std::string& path);
     void set_frame(int32_t index);

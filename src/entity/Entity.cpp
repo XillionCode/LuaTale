@@ -21,3 +21,16 @@ void Entity::set_active(bool active) {
 bool Entity::active() const {
     return active_;
 }
+
+float Entity::depth() const {
+    return depth_;
+}
+
+void Entity::set_depth(float depth) {
+    depth_ = depth;
+    custom_depth_ = true;
+}
+
+bool Entity::has_custom_depth() const {
+    return custom_depth_;
+}

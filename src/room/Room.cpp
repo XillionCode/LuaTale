@@ -112,6 +112,9 @@ void Room::step() {
 
 void Room::draw() {
     ClearBackground(BLACK);
+    std::stable_sort(entities_.begin(), entities_.end(), [](const auto& a, const auto& b) {
+        return a->depth() > b->depth();
+    });
     for (std::size_t i = 0; i < entities_.size(); ++i) {
         if (entities_[i]->visible()) {
             entities_[i]->draw();

@@ -37,6 +37,13 @@ float OverworldFrisk::width() const {
     return frames_[Down].empty() ? 20.0f : static_cast<float>(frames_[Down][0].width);
 }
 
+float OverworldFrisk::depth() const {
+    if (has_custom_depth()) {
+        return Entity::depth();
+    }
+    return -(y_ + height());
+}
+
 float OverworldFrisk::height() const {
     return frames_[Down].empty() ? 30.0f : static_cast<float>(frames_[Down][0].height);
 }

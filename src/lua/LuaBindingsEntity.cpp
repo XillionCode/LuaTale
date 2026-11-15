@@ -33,6 +33,8 @@ void register_entity_bindings(lua_State* lua) {
         .addFunction("visible", &Entity::visible)
         .addFunction("set_active", &Entity::set_active)
         .addFunction("active", &Entity::active)
+        .addFunction("depth", &Entity::depth)
+        .addFunction("set_depth", &Entity::set_depth)
         .endClass()
         .deriveClass<BoxEntity, Entity>("BoxEntity")
         .addConstructorFrom<std::shared_ptr<BoxEntity>, void(float, float, float, float, float)>()
