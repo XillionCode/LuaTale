@@ -1,6 +1,8 @@
 #pragma once
 
+#include <array>
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -10,21 +12,23 @@ struct KeyItem {
     float y = 0.0f;
     bool shakes = true;
     bool is_action = false;
-    int action_id = 0;  // 0=Quit, 1=Backspace, 2=Done
+    int32_t action_id = 0;  // 0=Quit, 1=Backspace, 2=Done
 };
 
 class KeyboardLayout {
 public:
+    static constexpr std::size_t kRowCount = 9;
+
     void build(float x, float y);
     void handle_navigation();
 
-    const std::vector<std::vector<KeyItem>>& rows() const;
+    const std::array<std::vector<KeyItem>, kRowCount>& rows() const;
     const KeyItem& current() const;
     std::size_t row() const;
     std::size_t col() const;
 
 private:
-    std::vector<std::vector<KeyItem>> rows_;
+    std::array<std::vector<KeyItem>, kRowCount> rows_;
     std::size_t row_ = 0;
     std::size_t col_ = 0;
 };

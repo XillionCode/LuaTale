@@ -1,5 +1,6 @@
 #include "TextEntity.hpp"
 
+#include <cstdint>
 #include <iostream>
 #include <utility>
 
@@ -9,7 +10,7 @@ TextEntity::TextEntity(const std::string& text,
                        const std::string& font_path,
                        const std::string& sfx_path,
                        float font_size,
-                       int steps_per_char)
+                       int32_t steps_per_char)
     : x_(x),
       y_(y),
       font_size_(font_size),
@@ -127,7 +128,7 @@ bool TextEntity::is_typing() const {
     return visible_chars_ < text_.size() && pause_timer_ == 0;
 }
 
-int TextEntity::current_emote() const {
+int32_t TextEntity::current_emote() const {
     return current_emote_;
 }
 
@@ -163,7 +164,7 @@ void TextEntity::on_emote(luabridge::LuaRef callback) {
     }
 }
 
-void TextEntity::set_cpp_emote_callback(std::function<void(int)> callback) {
+void TextEntity::set_cpp_emote_callback(std::function<void(int32_t)> callback) {
     on_emote_cpp_ = std::move(callback);
 }
 
@@ -209,7 +210,7 @@ void TextEntity::set_font(const std::string& font_path) {
     }
 
     if (!font_path.empty()) {
-        font_ = LoadFontEx(font_path.c_str(), static_cast<int>(font_size_), nullptr, 0);
+        font_ = LoadFontEx(font_path.c_str(), static_cast<int32_t>(font_size_), nullptr, 0);
         custom_font_ = font_.texture.id != 0;
     }
     if (!custom_font_) {

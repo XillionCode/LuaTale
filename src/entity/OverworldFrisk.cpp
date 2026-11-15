@@ -1,6 +1,7 @@
 #include "OverworldFrisk.hpp"
 
 #include <cmath>
+#include <cstdint>
 #include <string>
 
 OverworldFrisk::OverworldFrisk(float x, float y) : PlayerEntity(x, y, 3.0f) {
@@ -24,9 +25,9 @@ OverworldFrisk::~OverworldFrisk() {
     }
 }
 
-void OverworldFrisk::load_direction(Facing dir, const char* prefix, int count) {
+void OverworldFrisk::load_direction(Facing dir, const char* prefix, int32_t count) {
     frames_[dir].reserve(count);
-    for (int i = 0; i < count; ++i) {
+    for (int32_t i = 0; i < count; ++i) {
         std::string path = std::string(prefix) + std::to_string(i) + ".png";
         frames_[dir].push_back(LoadTexture(path.c_str()));
     }
@@ -122,7 +123,7 @@ void OverworldFrisk::step() {
         frame_accum_ = 0.0f;
     }
 
-    const int count = static_cast<int>(frames_[facing_].size());
+    const int32_t count = static_cast<int32_t>(frames_[facing_].size());
     if (count > 0 && frame_accum_ >= static_cast<float>(count)) {
         frame_accum_ = std::fmod(frame_accum_, static_cast<float>(count));
     }

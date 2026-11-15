@@ -6,6 +6,7 @@
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
+#include <optional>
 #include <string>
 
 class KeyboardEntity : public Entity {
@@ -28,9 +29,9 @@ private:
     void notify_update();
 
     std::string typed_text_;
-    luabridge::LuaRef on_update_;
-    luabridge::LuaRef on_quit_;
-    luabridge::LuaRef on_done_;
+    std::optional<luabridge::LuaRef> on_update_;
+    std::optional<luabridge::LuaRef> on_quit_;
+    std::optional<luabridge::LuaRef> on_done_;
 
     KeyboardLayout layout_;
     BitmapFont font_;

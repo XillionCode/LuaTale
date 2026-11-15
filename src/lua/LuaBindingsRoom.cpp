@@ -11,6 +11,7 @@
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -26,7 +27,7 @@ void register_room_bindings(lua_State* lua) {
         .addConstructorFrom<std::shared_ptr<RoomCutscene>,
                             void(const std::string&, float, float, float, float, float, float,
                                  const std::string&, float, float, const std::string&, const std::string&,
-                                 int, luabridge::LuaRef, luabridge::LuaRef)>()
+                                 int32_t, luabridge::LuaRef, luabridge::LuaRef)>()
         .addFunction("image", &RoomCutscene::image)
         .addFunction("text", &RoomCutscene::text)
         .addFunction("set_debug", &RoomCutscene::set_debug)

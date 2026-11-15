@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <raylib.h>
 #include <string>
 #include <vector>
@@ -20,7 +21,7 @@ struct TextEvent {
 
     Type type = Type::Pause;
     std::size_t char_index = 0;
-    int value = 0;
+    int32_t value = 0;
     Color color = WHITE;
 };
 

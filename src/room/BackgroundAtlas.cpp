@@ -47,7 +47,7 @@ const BackgroundEntry* BackgroundAtlas::find(const std::string& name) const {
     return it != entries_.end() ? &it->second : nullptr;
 }
 
-Texture2D BackgroundAtlas::texture_for_page(int page) {
+Texture2D BackgroundAtlas::texture_for_page(int32_t page) {
     auto it = pages_.find(page);
     if (it != pages_.end()) {
         return it->second;

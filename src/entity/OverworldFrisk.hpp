@@ -3,6 +3,7 @@
 #include "PlayerEntity.hpp"
 
 #include <array>
+#include <cstdint>
 #include <raylib.h>
 #include <vector>
 
@@ -20,7 +21,7 @@ public:
 private:
     enum Facing { Down = 0, Right = 1, Up = 2, Left = 3 };
 
-    void load_direction(Facing dir, const char* prefix, int count);
+    void load_direction(Facing dir, const char* prefix, int32_t count);
 
     std::array<std::vector<Texture2D>, 4> frames_;
     Facing facing_ = Down;

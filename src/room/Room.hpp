@@ -2,6 +2,7 @@
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -14,7 +15,7 @@ public:
     virtual ~Room();
 
     void add_entity(std::shared_ptr<Entity> entity);
-    void on_delay(int frames, luabridge::LuaRef callback);
+    void on_delay(int32_t frames, luabridge::LuaRef callback);
     void set_key_event(const std::string& key, luabridge::LuaRef callback);
 
     virtual void step();
@@ -22,7 +23,7 @@ public:
 
 protected:
     struct DelayTimer {
-        int remaining_frames = 0;
+        int32_t remaining_frames = 0;
         luabridge::LuaRef callback;
     };
 

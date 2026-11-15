@@ -1,6 +1,7 @@
 #include "NPCEntity.hpp"
 
 #include <cmath>
+#include <cstdint>
 #include <iostream>
 #include <utility>
 
@@ -32,11 +33,11 @@ void NPCEntity::add_frame(const std::string& path) {
     }
 }
 
-void NPCEntity::set_frame(int index) {
+void NPCEntity::set_frame(int32_t index) {
     if (frames_.empty()) {
         return;
     }
-    const int count = static_cast<int>(frames_.size());
+    const int32_t count = static_cast<int32_t>(frames_.size());
     current_frame_ = ((index % count) + count) % count;
     frame_accum_ = static_cast<float>(current_frame_);
 }
@@ -93,11 +94,11 @@ void NPCEntity::walk_to(float target_x, float target_y, float speed, luabridge::
 void NPCEntity::step() {
     if (anim_speed_ > 0.0f && !frames_.empty()) {
         frame_accum_ += anim_speed_;
-        const int count = static_cast<int>(frames_.size());
+        const int32_t count = static_cast<int32_t>(frames_.size());
         if (frame_accum_ >= static_cast<float>(count)) {
             frame_accum_ = std::fmod(frame_accum_, static_cast<float>(count));
         }
-        current_frame_ = static_cast<int>(frame_accum_);
+        current_frame_ = static_cast<int32_t>(frame_accum_);
     }
 
     if (walking_) {

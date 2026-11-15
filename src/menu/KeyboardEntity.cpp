@@ -1,6 +1,7 @@
 #include "KeyboardEntity.hpp"
 
 #include <raylib.h>
+#include <cstdint>
 #include <iostream>
 #include <utility>
 
@@ -9,10 +10,16 @@ KeyboardEntity::KeyboardEntity(float x,
                                const std::string& font_name,
                                luabridge::LuaRef on_update,
                                luabridge::LuaRef on_quit,
-                               luabridge::LuaRef on_done)
-    : on_update_(std::move(on_update)),
-      on_quit_(std::move(on_quit)),
-      on_done_(std::move(on_done)) {
+                               luabridge::LuaRef on_done) {
+    if (on_update.state() != nullptr && on_update.isFunction()) {
+        on_update_ = std::move(on_update);
+    }
+    if (on_quit.state() != nullptr && on_quit.isFunction()) {
+        on_quit_ = std::move(on_quit);
+    }
+    if (on_done.state() != nullptr && on_done.isFunction()) {
+        on_done_ = std::move(on_done);
+    }
     font_.load(font_name);
     layout_.build(x, y);
 }
@@ -28,8 +35,8 @@ void KeyboardEntity::set_typed_text(const std::string& text) {
 }
 
 void KeyboardEntity::notify_update() {
-    if (on_update_.isFunction()) {
-        auto res = on_update_(typed_text_);
+    if (on_update_ && on_update_->isFunction()) {
+        auto res = (*on_update_)(typed_text_);
         if (!res) {
             std::cerr << "KeyboardEntity on_update error: " << res.errorMessage() << '\n';
         }
@@ -60,16 +67,16 @@ void KeyboardEntity::step() {
                 typed_text_.back() = item.label[0];
             }
             notify_update();
-        } else if (item.action_id == 0 && on_quit_.isFunction()) {
-            auto res = on_quit_();
+        } else if (item.action_id == 0 && on_quit_ && on_quit_->isFunction()) {
+            auto res = (*on_quit_)();
             if (!res) {
                 std::cerr << "KeyboardEntity on_quit error: " << res.errorMessage() << '\n';
             }
         } else if (item.action_id == 1 && !typed_text_.empty()) {
             typed_text_.pop_back();
             notify_update();
-        } else if (item.action_id == 2 && on_done_.isFunction()) {
-            auto res = on_done_(typed_text_);
+        } else if (item.action_id == 2 && on_done_ && on_done_->isFunction()) {
+            auto res = (*on_done_)(typed_text_);
             if (!res) {
                 std::cerr << "KeyboardEntity on_done error: " << res.errorMessage() << '\n';
             }
@@ -86,7 +93,7 @@ void KeyboardEntity::draw() {
             if (font_.is_loaded()) {
                 font_.draw_text(item.label, item.x, item.y, 2.0f, 0.0f, 0.0f, false, item.shakes, color);
             } else {
-                DrawText(item.label.c_str(), static_cast<int>(item.x), static_cast<int>(item.y), 24, color);
+                DrawText(item.label.c_str(), static_cast<int32_t>(item.x), static_cast<int32_t>(item.y), 24, color);
             }
         }
     }

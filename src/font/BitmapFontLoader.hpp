@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
@@ -15,5 +16,5 @@ struct BitmapGlyph {
 
 bool load_bitmap_font_data(const std::string& font_name,
                            Texture2D& out_tex,
-                           std::unordered_map<int, BitmapGlyph>& out_glyphs,
+                           std::unordered_map<int32_t, BitmapGlyph>& out_glyphs,
                            float& out_line_height);

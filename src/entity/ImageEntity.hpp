@@ -2,6 +2,7 @@
 
 #include "Entity.hpp"
 
+#include <cstdint>
 #include <raylib.h>
 #include <string>
 
@@ -29,7 +30,7 @@ public:
     void start_fade_out();
     bool is_done() const;
     void set_clip(float x, float y, float w, float h);
-    void set_pan_delay(int steps);
+    void set_pan_delay(int32_t steps);
 
 private:
     Texture2D texture_{};
@@ -44,5 +45,5 @@ private:
     FadeState state_ = FadeState::FadeIn;
     bool has_clip_ = false;
     Rectangle clip_{};
-    int pan_delay_ = 0;
+    int32_t pan_delay_ = 0;
 };

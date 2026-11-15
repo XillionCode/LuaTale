@@ -18,12 +18,16 @@ RoomCutscene::RoomCutscene(const std::string& image_path,
                            float text_y,
                            const std::string& font_path,
                            const std::string& sfx_path,
-                           int hold_steps,
+                           int32_t hold_steps,
                            luabridge::LuaRef on_end,
                            luabridge::LuaRef on_skip)
-    : hold_steps_(hold_steps),
-      on_end_(std::move(on_end)),
-      on_skip_(std::move(on_skip)) {
+    : hold_steps_(hold_steps) {
+    if (on_end.state() != nullptr && on_end.isFunction()) {
+        on_end_ = std::move(on_end);
+    }
+    if (on_skip.state() != nullptr && on_skip.isFunction()) {
+        on_skip_ = std::move(on_skip);
+    }
     image_ = std::make_shared<ImageEntity>(image_path, img_x, img_y, img_scale, pan_dx, pan_dy, fade_speed);
     add_entity(image_);
 
@@ -56,8 +60,8 @@ void RoomCutscene::step() {
 
     if (debug_ && IsKeyPressed(KEY_N)) {
         ended_ = true;
-        if (on_end_.isFunction()) {
-            auto res = on_end_();
+        if (on_end_ && on_end_->isFunction()) {
+            auto res = (*on_end_)();
             if (!res) {
                 std::cerr << "RoomCutscene on_end error: " << res.errorMessage() << '\n';
             }
@@ -81,9 +85,9 @@ void RoomCutscene::step() {
         }
     } else if (image_->is_done()) {
         ended_ = true;
-        luabridge::LuaRef& cb = (skipped_ && on_skip_.isFunction()) ? on_skip_ : on_end_;
-        if (cb.isFunction()) {
-            auto res = cb();
+        std::optional<luabridge::LuaRef>& cb = (skipped_ && on_skip_ && on_skip_->isFunction()) ? on_skip_ : on_end_;
+        if (cb && cb->isFunction()) {
+            auto res = (*cb)();
             if (!res) {
                 std::cerr << "RoomCutscene callback error: " << res.errorMessage() << '\n';
             }

@@ -4,13 +4,14 @@
 
 #include <raylib.h>
 #include <lua.hpp>
+#include <cstdint>
 #include <iostream>
 #include <utility>
 
 Engine::Engine() {
-    constexpr int kWidth = 640;
-    constexpr int kHeight = 480;
-    constexpr int kTargetFps = 30;
+    constexpr int32_t kWidth = 640;
+    constexpr int32_t kHeight = 480;
+    constexpr int32_t kTargetFps = 30;
 
     SetTraceLogLevel(LOG_WARNING);
     InitWindow(kWidth, kHeight, "UNDERTALE");
@@ -53,7 +54,7 @@ void Engine::set_language(const std::string& lang) {
 }
 
 void Engine::set_log_level(const std::string& level) {
-    static const std::pair<const char*, int> levels[] = {
+    static const std::pair<const char*, int32_t> levels[] = {
         {"all", LOG_ALL},       {"trace", LOG_TRACE},   {"debug", LOG_DEBUG},
         {"info", LOG_INFO},     {"warn", LOG_WARNING},  {"warning", LOG_WARNING},
         {"error", LOG_ERROR},   {"fatal", LOG_FATAL},   {"none", LOG_NONE},

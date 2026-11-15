@@ -1,30 +1,31 @@
 #include "BitmapFont.hpp"
+#include <cstdint>
 
 namespace {
 
-int next_utf8(const std::string& s, std::size_t& i) {
+int32_t next_utf8(const std::string& s, std::size_t& i) {
     unsigned char c0 = static_cast<unsigned char>(s[i]);
     if (c0 < 0x80) {
         ++i;
         return c0;
     }
     if ((c0 & 0xE0) == 0xC0 && i + 1 < s.size()) {
-        int cp = ((c0 & 0x1F) << 6) | (static_cast<unsigned char>(s[i + 1]) & 0x3F);
+        int32_t cp = ((c0 & 0x1F) << 6) | (static_cast<unsigned char>(s[i + 1]) & 0x3F);
         i += 2;
         return cp;
     }
     if ((c0 & 0xF0) == 0xE0 && i + 2 < s.size()) {
-        int cp = ((c0 & 0x0F) << 12) |
-                 ((static_cast<unsigned char>(s[i + 1]) & 0x3F) << 6) |
-                 (static_cast<unsigned char>(s[i + 2]) & 0x3F);
+        int32_t cp = ((c0 & 0x0F) << 12) |
+                     ((static_cast<unsigned char>(s[i + 1]) & 0x3F) << 6) |
+                     (static_cast<unsigned char>(s[i + 2]) & 0x3F);
         i += 3;
         return cp;
     }
     if ((c0 & 0xF8) == 0xF0 && i + 3 < s.size()) {
-        int cp = ((c0 & 0x07) << 18) |
-                 ((static_cast<unsigned char>(s[i + 1]) & 0x3F) << 12) |
-                 ((static_cast<unsigned char>(s[i + 2]) & 0x3F) << 6) |
-                 (static_cast<unsigned char>(s[i + 3]) & 0x3F);
+        int32_t cp = ((c0 & 0x07) << 18) |
+                     ((static_cast<unsigned char>(s[i + 1]) & 0x3F) << 12) |
+                     ((static_cast<unsigned char>(s[i + 2]) & 0x3F) << 6) |
+                     (static_cast<unsigned char>(s[i + 3]) & 0x3F);
         i += 4;
         return cp;
     }
@@ -82,7 +83,7 @@ void BitmapFont::draw_text(const std::string& text,
         float line_width = 0.0f;
         if (centered) {
             for (std::size_t i = line_start; i < line_end;) {
-                int cp = next_utf8(text, i);
+                int32_t cp = next_utf8(text, i);
                 if (hspace > 0.0f) {
                     line_width += hspace;
                 } else {
@@ -97,7 +98,7 @@ void BitmapFont::draw_text(const std::string& text,
         float cursor_x = centered ? (x - line_width * 0.5f) : x;
         for (std::size_t i = line_start; i < line_end;) {
             const std::size_t char_idx = i;
-            int cp = next_utf8(text, i);
+            int32_t cp = next_utf8(text, i);
             auto it = glyphs_.find(cp);
             if (it != glyphs_.end()) {
                 Color draw_color = color;

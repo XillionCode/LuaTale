@@ -4,6 +4,7 @@
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
+#include <cstdint>
 #include <optional>
 #include <raylib.h>
 #include <string>
@@ -18,7 +19,7 @@ public:
     void draw() override;
 
     void add_frame(const std::string& path);
-    void set_frame(int index);
+    void set_frame(int32_t index);
     void set_anim_speed(float frames_per_step);
 
     void set_solid(bool solid);
@@ -32,7 +33,7 @@ public:
 
 private:
     std::vector<Texture2D> frames_;
-    int current_frame_ = 0;
+    int32_t current_frame_ = 0;
     float frame_accum_ = 0.0f;
     float anim_speed_ = 0.0f;
     bool solid_ = false;

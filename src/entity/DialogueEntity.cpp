@@ -3,6 +3,7 @@
 #include "SpriteEntity.hpp"
 #include "TextEntity.hpp"
 
+#include <cstdint>
 #include <iostream>
 #include <raylib.h>
 #include <utility>
@@ -12,7 +13,7 @@ DialogueEntity::DialogueEntity(bool top_side,
                                const std::string& font_path,
                                const std::string& sfx_path,
                                float font_size,
-                               int steps_per_char)
+                               int32_t steps_per_char)
     : top_side_(top_side),
       has_portrait_(has_portrait) {
     box_ = std::make_shared<BoxEntity>(32.0f, 320.0f, 576.0f, 150.0f, 6.0f);
@@ -20,7 +21,7 @@ DialogueEntity::DialogueEntity(bool top_side,
     text_ = std::make_shared<TextEntity>("", 56.0f, 342.0f, font_path, sfx_path, font_size, steps_per_char);
     text_->set_spacing(16.0f, 36.0f);
 
-    text_->set_cpp_emote_callback([this](int emote) {
+    text_->set_cpp_emote_callback([this](int32_t emote) {
         update_portrait_sprite(true);
         if (on_emote_ && on_emote_->isFunction()) {
             auto res = (*on_emote_)(emote);
@@ -56,7 +57,7 @@ void DialogueEntity::set_top_side(bool top_side) {
     update_layout();
 }
 
-void DialogueEntity::set_portrait(int emote_id, const std::string& closed_path, const std::string& open_path) {
+void DialogueEntity::set_portrait(int32_t emote_id, const std::string& closed_path, const std::string& open_path) {
     portraits_[emote_id] = PortraitImages{closed_path, open_path.empty() ? closed_path : open_path};
     if (!has_portrait_) {
         has_portrait_ = true;
@@ -102,7 +103,7 @@ void DialogueEntity::update_portrait_sprite(bool force) {
     if (!has_portrait_) {
         return;
     }
-    const int emote = text_->current_emote();
+    const int32_t emote = text_->current_emote();
     auto it = portraits_.find(emote);
     if (it == portraits_.end()) {
         it = portraits_.find(0);

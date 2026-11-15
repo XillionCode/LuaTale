@@ -7,6 +7,9 @@ public:
     Entity() = default;
     virtual ~Entity();
 
+    Entity(const Entity&) = delete;
+    Entity& operator=(const Entity&) = delete;
+
     virtual void step();
     virtual void draw();
 

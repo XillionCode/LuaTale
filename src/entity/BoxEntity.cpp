@@ -1,4 +1,5 @@
 #include "BoxEntity.hpp"
+#include <cstdint>
 
 BoxEntity::BoxEntity(float x, float y, float width, float height, float border_thickness)
     : x_(x),
@@ -8,17 +9,17 @@ BoxEntity::BoxEntity(float x, float y, float width, float height, float border_t
       border_thickness_(border_thickness) {}
 
 void BoxEntity::draw() {
-    DrawRectangle(static_cast<int>(x_),
-                  static_cast<int>(y_),
-                  static_cast<int>(width_),
-                  static_cast<int>(height_),
+    DrawRectangle(static_cast<int32_t>(x_),
+                  static_cast<int32_t>(y_),
+                  static_cast<int32_t>(width_),
+                  static_cast<int32_t>(height_),
                   border_color_);
     const float inset = border_thickness_;
     if (width_ > inset * 2.0f && height_ > inset * 2.0f) {
-        DrawRectangle(static_cast<int>(x_ + inset),
-                      static_cast<int>(y_ + inset),
-                      static_cast<int>(width_ - inset * 2.0f),
-                      static_cast<int>(height_ - inset * 2.0f),
+        DrawRectangle(static_cast<int32_t>(x_ + inset),
+                      static_cast<int32_t>(y_ + inset),
+                      static_cast<int32_t>(width_ - inset * 2.0f),
+                      static_cast<int32_t>(height_ - inset * 2.0f),
                       fill_color_);
     }
 }

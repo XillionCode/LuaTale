@@ -5,6 +5,7 @@
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <raylib.h>
@@ -31,7 +32,7 @@ struct RoomTile {
     float source_y = 0.0f;
     float width = 0.0f;
     float height = 0.0f;
-    int depth = 0;
+    int32_t depth = 0;
     float scale_x = 1.0f;
     float scale_y = 1.0f;
     Color tint = WHITE;

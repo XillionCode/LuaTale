@@ -7,6 +7,7 @@
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <optional>
 #include <raylib.h>
@@ -21,7 +22,7 @@ public:
                const std::string& font_path = "",
                const std::string& sfx_path = "",
                float font_size = 32.0f,
-               int steps_per_char = 1);
+               int32_t steps_per_char = 1);
     ~TextEntity() override;
 
     void step() override;
@@ -29,12 +30,12 @@ public:
 
     bool is_finished() const;
     bool is_typing() const;
-    int current_emote() const;
+    int32_t current_emote() const;
     void skip();
     void restart(const std::string& text);
     void set_parsed_page(const ParsedPage& page, bool reveal_all = false);
     void on_emote(luabridge::LuaRef callback);
-    void set_cpp_emote_callback(std::function<void(int)> callback);
+    void set_cpp_emote_callback(std::function<void(int32_t)> callback);
 
     void set_font_size(float font_size);
     void set_font(const std::string& font_path);
@@ -53,15 +54,15 @@ private:
     std::vector<TextColorRun> color_runs_;
     std::vector<TextEvent> events_;
     std::size_t next_event_ = 0;
-    int current_emote_ = 0;
+    int32_t current_emote_ = 0;
 
     float x_ = 0.0f;
     float y_ = 0.0f;
     float rotation_ = 0.0f;
     float font_size_ = 32.0f;
-    int steps_per_char_ = 2;
-    int step_counter_ = 0;
-    int pause_timer_ = 0;
+    int32_t steps_per_char_ = 2;
+    int32_t step_counter_ = 0;
+    int32_t pause_timer_ = 0;
     std::size_t visible_chars_ = 0;
 
     Font font_{};
@@ -74,5 +75,5 @@ private:
     Sound sfx_{};
     bool has_sfx_ = false;
     std::optional<luabridge::LuaRef> on_emote_lua_;
-    std::function<void(int)> on_emote_cpp_;
+    std::function<void(int32_t)> on_emote_cpp_;
 };

@@ -1,6 +1,7 @@
 #include "ImageEntity.hpp"
 
 #include <algorithm>
+#include <cstdint>
 
 ImageEntity::ImageEntity(const std::string& path,
                          float x,
@@ -68,10 +69,10 @@ void ImageEntity::draw() {
     Color tint{255, 255, 255, static_cast<unsigned char>(alpha_ * 255.0f)};
 
     if (has_clip_) {
-        BeginScissorMode(static_cast<int>(clip_.x),
-                         static_cast<int>(clip_.y),
-                         static_cast<int>(clip_.width),
-                         static_cast<int>(clip_.height));
+        BeginScissorMode(static_cast<int32_t>(clip_.x),
+                         static_cast<int32_t>(clip_.y),
+                         static_cast<int32_t>(clip_.width),
+                         static_cast<int32_t>(clip_.height));
     }
     DrawTexturePro(texture_, src, dst, Vector2{0.0f, 0.0f}, 0.0f, tint);
     if (has_clip_) {
@@ -84,7 +85,7 @@ void ImageEntity::set_clip(float x, float y, float w, float h) {
     clip_ = Rectangle{x, y, w, h};
 }
 
-void ImageEntity::set_pan_delay(int steps) {
+void ImageEntity::set_pan_delay(int32_t steps) {
     pan_delay_ = steps > 0 ? steps : 0;
 }
 

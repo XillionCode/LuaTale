@@ -52,7 +52,7 @@ void Room::add_entity(std::shared_ptr<Entity> entity) {
     }
 }
 
-void Room::on_delay(int frames, luabridge::LuaRef callback) {
+void Room::on_delay(int32_t frames, luabridge::LuaRef callback) {
     if (callback.isFunction()) {
         timers_.push_back({frames, std::move(callback)});
     }

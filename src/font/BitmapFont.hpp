@@ -3,6 +3,7 @@
 #include "BitmapFontLoader.hpp"
 #include "text/Parser.hpp"
 
+#include <cstdint>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
@@ -35,6 +36,6 @@ public:
 private:
     Texture2D texture_{};
     bool loaded_ = false;
-    std::unordered_map<int, BitmapGlyph> glyphs_;
+    std::unordered_map<int32_t, BitmapGlyph> glyphs_;
     float line_height_ = 16.0f;
 };

@@ -1,4 +1,5 @@
 #include "LuaBindings.hpp"
+#include <cstdint>
 #include "entity/BattleSoul.hpp"
 #include "entity/BoxEntity.hpp"
 #include "entity/DialogueEntity.hpp"
@@ -93,7 +94,7 @@ void register_entity_bindings(lua_State* lua) {
         .endClass()
         .deriveClass<DialogueEntity, EntityGroup>("DialogueEntity")
         .addConstructorFrom<std::shared_ptr<DialogueEntity>,
-                            void(bool, bool, const std::string&, const std::string&, float, int)>()
+                            void(bool, bool, const std::string&, const std::string&, float, int32_t)>()
         .addFunction("set_text", &DialogueEntity::set_text)
         .addFunction("add_page", &DialogueEntity::add_page)
         .addFunction("set_has_portrait", &DialogueEntity::set_has_portrait)
@@ -123,7 +124,7 @@ void register_entity_bindings(lua_State* lua) {
         .endClass()
         .deriveClass<TextEntity, Entity>("TextEntity")
         .addConstructorFrom<std::shared_ptr<TextEntity>,
-                            void(const std::string&, float, float, const std::string&, const std::string&, float, int)>()
+                            void(const std::string&, float, float, const std::string&, const std::string&, float, int32_t)>()
         .addFunction("is_finished", &TextEntity::is_finished)
         .addFunction("is_typing", &TextEntity::is_typing)
         .addFunction("current_emote", &TextEntity::current_emote)

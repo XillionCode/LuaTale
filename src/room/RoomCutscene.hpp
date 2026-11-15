@@ -4,7 +4,9 @@
 
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 
 class ImageEntity;
@@ -24,7 +26,7 @@ public:
                  float text_y,
                  const std::string& font_path,
                  const std::string& sfx_path,
-                 int hold_steps,
+                 int32_t hold_steps,
                  luabridge::LuaRef on_end,
                  luabridge::LuaRef on_skip);
     ~RoomCutscene() override;
@@ -38,10 +40,10 @@ public:
 private:
     std::shared_ptr<ImageEntity> image_;
     std::shared_ptr<TextEntity> text_;
-    int hold_steps_ = -1;
-    int hold_timer_ = 0;
-    luabridge::LuaRef on_end_;
-    luabridge::LuaRef on_skip_;
+    int32_t hold_steps_ = -1;
+    int32_t hold_timer_ = 0;
+    std::optional<luabridge::LuaRef> on_end_;
+    std::optional<luabridge::LuaRef> on_skip_;
     bool ending_ = false;
     bool skipped_ = false;
     bool ended_ = false;

@@ -2,27 +2,29 @@
 
 #include <raylib.h>
 #include <algorithm>
+#include <array>
+#include <string_view>
 #include <utility>
 
 void KeyboardLayout::build(float x, float y) {
-    rows_.clear();
-
-    const std::vector<std::string> alpha_rows = {
+    constexpr std::array<std::string_view, 8> alpha_rows = {
         "ABCDEFG",
         "HIJKLMN",
         "OPQRSTU",
         "VWXYZ",
         "abcdefg",
-        "hijklmno",
-        "pqrstuv",
-        "wxyz",
+        "hijklmn",
+        "opqrstu",
+        "vwxyz",
     };
 
     constexpr float kColStep = 64.0f;
     constexpr float kRowStep = 28.0f;
 
     for (std::size_t r = 0; r < alpha_rows.size(); ++r) {
-        std::vector<KeyItem> row;
+        std::vector<KeyItem>& row = rows_[r];
+        row.clear();
+        row.reserve(alpha_rows[r].size());
         const float y_off = (r >= 4 ? 12.0f : 0.0f);
         for (std::size_t c = 0; c < alpha_rows[r].size(); ++c) {
             row.push_back(KeyItem{
@@ -34,19 +36,18 @@ void KeyboardLayout::build(float x, float y) {
                 0,
             });
         }
-        rows_.push_back(std::move(row));
     }
 
     const float action_y = y + static_cast<float>(alpha_rows.size()) * kRowStep + 24.0f;
-    rows_.push_back({
+    rows_[alpha_rows.size()] = {
         KeyItem{"Quit", x, action_y, false, true, 0},
         KeyItem{"Backspace", x + 130.0f, action_y, false, true, 1},
         KeyItem{"Done", x + 320.0f, action_y, false, true, 2},
-    });
+    };
 }
 
 void KeyboardLayout::handle_navigation() {
-    if (rows_.empty()) {
+    if (rows_[row_].empty()) {
         return;
     }
 
@@ -64,7 +65,7 @@ void KeyboardLayout::handle_navigation() {
     }
 }
 
-const std::vector<std::vector<KeyItem>>& KeyboardLayout::rows() const {
+const std::array<std::vector<KeyItem>, KeyboardLayout::kRowCount>& KeyboardLayout::rows() const {
     return rows_;
 }
 
