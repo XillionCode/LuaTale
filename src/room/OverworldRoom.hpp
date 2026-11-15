@@ -6,6 +6,7 @@
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
 #include <memory>
+#include <optional>
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
@@ -82,7 +83,7 @@ private:
     std::vector<std::shared_ptr<Entity>> ui_entities_;
     std::unordered_map<std::string, Vector2> markers_;
     std::weak_ptr<PlayerEntity> follow_target_;
-    luabridge::LuaRef on_door_{nullptr};
+    std::optional<luabridge::LuaRef> on_door_;
     bool door_armed_ = false;
     bool door_triggered_ = false;
     float room_width_ = 320.0f;

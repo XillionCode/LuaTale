@@ -223,7 +223,11 @@ void OverworldRoom::set_follow(std::shared_ptr<PlayerEntity> target) {
 }
 
 void OverworldRoom::on_door(luabridge::LuaRef callback) {
-    on_door_ = std::move(callback);
+    if (callback.isFunction()) {
+        on_door_ = std::move(callback);
+    } else {
+        on_door_.reset();
+    }
 }
 
 float OverworldRoom::marker_x(const std::string& name) const {
@@ -301,7 +305,7 @@ void OverworldRoom::step() {
         camera_.target.x = std::clamp(cx - 160.0f, 0.0f, max_x);
         camera_.target.y = std::clamp(cy - 120.0f, 0.0f, max_y);
 
-        if (!target->frozen() && !door_triggered_ && on_door_.isFunction()) {
+        if (!target->frozen() && !door_triggered_ && on_door_ && on_door_->isFunction()) {
             const Rectangle hb = target->attempted_hitbox();
             bool touching_any = false;
             for (const RoomDoor& door : doors_) {
@@ -309,7 +313,7 @@ void OverworldRoom::step() {
                     touching_any = true;
                     if (door_armed_) {
                         door_triggered_ = true;
-                        auto res = on_door_(door.name);
+                        auto res = (*on_door_)(door.name);
                         if (!res) {
                             std::cerr << "OverworldRoom on_door error: " << res.errorMessage() << '\n';
                         }

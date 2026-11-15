@@ -96,7 +96,11 @@ std::size_t SoulListMenu::selected() const {
 }
 
 void SoulListMenu::on_move(luabridge::LuaRef callback) {
-    on_move_ = std::move(callback);
+    if (callback.isFunction()) {
+        on_move_ = std::move(callback);
+    } else {
+        on_move_.reset();
+    }
 }
 
 void SoulListMenu::set_font(const std::string& font_path) {
@@ -129,15 +133,15 @@ void SoulListMenu::self_step() {
         const std::size_t count = callbacks_.size();
         const bool prev = horizontal_ ? IsKeyPressed(KEY_LEFT) : IsKeyPressed(KEY_UP);
         const bool next = horizontal_ ? IsKeyPressed(KEY_RIGHT) : IsKeyPressed(KEY_DOWN);
-        if (count > 1 && (prev || next) && on_move_.isFunction()) {
-            auto res = on_move_();
+        if (count > 1 && (prev || next) && on_move_ && on_move_->isFunction()) {
+            auto res = (*on_move_)();
             if (!res) {
                 std::cerr << "SoulListMenu on_move error: " << res.errorMessage() << '\n';
             }
         }
     }
-    if (not_soul_ && selected_ != prev_selected && on_move_.isFunction()) {
-        auto res = on_move_();
+    if (not_soul_ && selected_ != prev_selected && on_move_ && on_move_->isFunction()) {
+        auto res = (*on_move_)();
         if (!res) {
             std::cerr << "SoulListMenu on_move error: " << res.errorMessage() << '\n';
         }

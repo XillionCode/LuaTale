@@ -6,6 +6,7 @@
 #include <LuaBridge/LuaBridge.h>
 #include <cstddef>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -49,5 +50,5 @@ private:
     std::shared_ptr<MenuSoul> soul_;
     std::vector<std::shared_ptr<TextEntity>> labels_;
     std::vector<luabridge::LuaRef> callbacks_;
-    luabridge::LuaRef on_move_{nullptr};
+    std::optional<luabridge::LuaRef> on_move_;
 };
