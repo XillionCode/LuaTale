@@ -23,6 +23,10 @@ void PlayerEntity::set_collider(std::function<bool(Rectangle)> collider) {
     collider_ = std::move(collider);
 }
 
+void PlayerEntity::set_debug(bool debug) {
+    debug_ = debug;
+}
+
 bool PlayerEntity::collides_at(float x, float y) const {
     if (!collider_) {
         return false;

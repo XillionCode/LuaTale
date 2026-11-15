@@ -63,33 +63,34 @@ void OverworldFrisk::step() {
         }
     }
 
+    const float move_speed = (debug_ && IsKeyDown(KEY_BACKSPACE)) ? (speed_ * 2.0f) : speed_;
     const float prev_x = x_;
     const float prev_y = y_;
-    attempted_x_ = x_ + dx * speed_;
-    attempted_y_ = y_ + dy * speed_;
+    attempted_x_ = x_ + dx * move_speed;
+    attempted_y_ = y_ + dy * move_speed;
 
     if (dx != 0.0f) {
-        float next_x = x_ + dx * speed_;
+        float next_x = x_ + dx * move_speed;
         if (!collides_at(next_x, y_)) {
             x_ = next_x;
-        } else if (dy == 0.0f && !collides_at(next_x, y_ - speed_)) {
+        } else if (dy == 0.0f && !collides_at(next_x, y_ - move_speed)) {
             x_ = next_x;
-            y_ -= speed_;
-        } else if (dy == 0.0f && !collides_at(next_x, y_ + speed_)) {
+            y_ -= move_speed;
+        } else if (dy == 0.0f && !collides_at(next_x, y_ + move_speed)) {
             x_ = next_x;
-            y_ += speed_;
+            y_ += move_speed;
         }
     }
 
     if (dy != 0.0f) {
-        float next_y = y_ + dy * speed_;
+        float next_y = y_ + dy * move_speed;
         if (!collides_at(x_, next_y)) {
             y_ = next_y;
-        } else if (dx == 0.0f && !collides_at(x_ - speed_, next_y)) {
-            x_ -= speed_;
+        } else if (dx == 0.0f && !collides_at(x_ - move_speed, next_y)) {
+            x_ -= move_speed;
             y_ = next_y;
-        } else if (dx == 0.0f && !collides_at(x_ + speed_, next_y)) {
-            x_ += speed_;
+        } else if (dx == 0.0f && !collides_at(x_ + move_speed, next_y)) {
+            x_ += move_speed;
             y_ = next_y;
         }
     }
