@@ -33,6 +33,7 @@ private:
     lua_State* lua_ = nullptr;
     MusicPlayer music_;
     std::shared_ptr<Room> current_room_;
+    std::shared_ptr<Room> pending_room_;
     std::string language_ = "en";
     TextData text_data_;
     bool should_quit_ = false;

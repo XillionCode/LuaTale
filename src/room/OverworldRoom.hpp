@@ -57,11 +57,15 @@ public:
 
     void set_follow(std::shared_ptr<PlayerEntity> target);
     void on_door(luabridge::LuaRef callback);
+    void add_ui_entity(std::shared_ptr<Entity> entity);
+    void clear_ui_entities();
     bool collides(Rectangle hitbox) const;
     float marker_x(const std::string& name) const;
     float marker_y(const std::string& name) const;
     float spawn_x() const;
     float spawn_y() const;
+    float view_x() const;
+    float view_y() const;
     float width() const;
     float height() const;
 
@@ -75,6 +79,7 @@ private:
     std::vector<Rectangle> solid_walls_;
     std::vector<SlopeWall> slope_walls_;
     std::vector<RoomDoor> doors_;
+    std::vector<std::shared_ptr<Entity>> ui_entities_;
     std::unordered_map<std::string, Vector2> markers_;
     std::weak_ptr<PlayerEntity> follow_target_;
     luabridge::LuaRef on_door_{nullptr};

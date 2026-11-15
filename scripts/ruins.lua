@@ -1,3 +1,5 @@
+local overworld_menu = require("scripts.overworld_menu")
+
 local M = {}
 
 local RUINS_ORDER = {
@@ -109,6 +111,7 @@ function M.enter(room_name, marker_name)
 	frisk:set_debug(DEBUG_MODE)
 	room:add_entity(frisk)
 	room:set_follow(frisk)
+	overworld_menu.attach(room, frisk)
 	room:on_door(function(door_name)
 		local next_room, next_marker = resolve_door(room_name, door_name)
 		if next_room then

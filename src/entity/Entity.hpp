@@ -9,4 +9,14 @@ public:
 
     virtual void step();
     virtual void draw();
+
+    void set_visible(bool visible);
+    bool visible() const;
+
+    void set_active(bool active);
+    bool active() const;
+
+private:
+    bool visible_ = true;
+    bool active_ = true;
 };

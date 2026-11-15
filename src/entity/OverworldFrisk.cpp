@@ -41,6 +41,13 @@ float OverworldFrisk::height() const {
 }
 
 void OverworldFrisk::step() {
+    if (frozen_) {
+        moving_ = false;
+        attempted_x_ = x_;
+        attempted_y_ = y_;
+        return;
+    }
+
     const bool left = IsKeyDown(KEY_LEFT);
     const bool right = IsKeyDown(KEY_RIGHT);
     const bool up = IsKeyDown(KEY_UP);

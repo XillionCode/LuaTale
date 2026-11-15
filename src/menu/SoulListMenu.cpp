@@ -55,10 +55,48 @@ void SoulListMenu::add_option(const std::string& label, luabridge::LuaRef on_sel
     callbacks_.push_back(std::move(on_select));
 }
 
+void SoulListMenu::clear_options() {
+    clear_children();
+    labels_.clear();
+    callbacks_.clear();
+    selected_ = 0;
+    if (!not_soul_ && soul_) {
+        soul_->clear_snap_points();
+        add_child(soul_);
+    }
+}
+
 void SoulListMenu::set_option_label(std::size_t index, const std::string& label) {
     if (index < labels_.size()) {
         labels_[index]->set_text(label);
     }
+}
+
+void SoulListMenu::set_option_color(std::size_t index,
+                                    unsigned char r,
+                                    unsigned char g,
+                                    unsigned char b,
+                                    unsigned char a) {
+    if (index < labels_.size()) {
+        labels_[index]->set_color(r, g, b, a);
+    }
+}
+
+void SoulListMenu::set_selected(std::size_t index) {
+    selected_ = index < callbacks_.size() ? index : 0;
+    if (!not_soul_ && soul_) {
+        soul_->set_selected(selected_);
+    } else {
+        update_colors();
+    }
+}
+
+std::size_t SoulListMenu::selected() const {
+    return not_soul_ ? selected_ : (soul_ ? soul_->get_selected() : 0);
+}
+
+void SoulListMenu::on_move(luabridge::LuaRef callback) {
+    on_move_ = std::move(callback);
 }
 
 void SoulListMenu::set_font(const std::string& font_path) {
@@ -73,6 +111,7 @@ void SoulListMenu::self_step() {
         return;
     }
 
+    const std::size_t prev_selected = selected();
     if (not_soul_) {
         const std::size_t count = callbacks_.size();
         const bool prev = horizontal_ ? IsKeyPressed(KEY_LEFT) : IsKeyPressed(KEY_UP);
@@ -83,6 +122,24 @@ void SoulListMenu::self_step() {
         } else if (next) {
             selected_ = (selected_ + 1) % count;
             update_colors();
+        }
+    } else if (soul_) {
+        // MenuSoul steps after self_step(); check on_move after or compare?
+        // Actually EntityGroup calls self_step() BEFORE children! So check key press or track selected_.
+        const std::size_t count = callbacks_.size();
+        const bool prev = horizontal_ ? IsKeyPressed(KEY_LEFT) : IsKeyPressed(KEY_UP);
+        const bool next = horizontal_ ? IsKeyPressed(KEY_RIGHT) : IsKeyPressed(KEY_DOWN);
+        if (count > 1 && (prev || next) && on_move_.isFunction()) {
+            auto res = on_move_();
+            if (!res) {
+                std::cerr << "SoulListMenu on_move error: " << res.errorMessage() << '\n';
+            }
+        }
+    }
+    if (not_soul_ && selected_ != prev_selected && on_move_.isFunction()) {
+        auto res = on_move_();
+        if (!res) {
+            std::cerr << "SoulListMenu on_move error: " << res.errorMessage() << '\n';
         }
     }
 

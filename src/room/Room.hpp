@@ -3,6 +3,7 @@
 #include <lua.hpp>
 #include <LuaBridge/LuaBridge.h>
 #include <memory>
+#include <string>
 #include <vector>
 
 class Entity;
@@ -14,6 +15,7 @@ public:
 
     void add_entity(std::shared_ptr<Entity> entity);
     void on_delay(int frames, luabridge::LuaRef callback);
+    void set_key_event(const std::string& key, luabridge::LuaRef callback);
 
     virtual void step();
     virtual void draw();
@@ -24,6 +26,12 @@ protected:
         luabridge::LuaRef callback;
     };
 
+    struct KeyEvent {
+        std::string key;
+        luabridge::LuaRef callback;
+    };
+
     std::vector<std::shared_ptr<Entity>> entities_;
     std::vector<DelayTimer> timers_;
+    std::vector<KeyEvent> key_events_;
 };

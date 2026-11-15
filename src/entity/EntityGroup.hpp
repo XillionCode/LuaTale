@@ -11,6 +11,7 @@ public:
     ~EntityGroup() override;
 
     void add_child(std::shared_ptr<Entity> child);
+    void clear_children();
 
     void step() final;
     void draw() final;

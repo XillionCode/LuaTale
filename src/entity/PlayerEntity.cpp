@@ -27,6 +27,14 @@ void PlayerEntity::set_debug(bool debug) {
     debug_ = debug;
 }
 
+void PlayerEntity::set_frozen(bool frozen) {
+    frozen_ = frozen;
+}
+
+bool PlayerEntity::frozen() const {
+    return frozen_;
+}
+
 bool PlayerEntity::collides_at(float x, float y) const {
     if (!collider_) {
         return false;

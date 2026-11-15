@@ -258,6 +258,24 @@ float OverworldRoom::spawn_y() const {
     return spawn_y_;
 }
 
+float OverworldRoom::view_x() const {
+    return camera_.target.x;
+}
+
+float OverworldRoom::view_y() const {
+    return camera_.target.y;
+}
+
+void OverworldRoom::add_ui_entity(std::shared_ptr<Entity> entity) {
+    if (entity) {
+        ui_entities_.push_back(std::move(entity));
+    }
+}
+
+void OverworldRoom::clear_ui_entities() {
+    ui_entities_.clear();
+}
+
 float OverworldRoom::width() const {
     return room_width_;
 }
@@ -269,6 +287,12 @@ float OverworldRoom::height() const {
 void OverworldRoom::step() {
     Room::step();
 
+    for (std::size_t i = 0; i < ui_entities_.size(); ++i) {
+        if (ui_entities_[i]->active()) {
+            ui_entities_[i]->step();
+        }
+    }
+
     if (auto target = follow_target_.lock()) {
         const float cx = target->x() + target->width() * 0.5f;
         const float cy = target->y() + target->height() * 0.5f;
@@ -277,7 +301,7 @@ void OverworldRoom::step() {
         camera_.target.x = std::clamp(cx - 160.0f, 0.0f, max_x);
         camera_.target.y = std::clamp(cy - 120.0f, 0.0f, max_y);
 
-        if (!door_triggered_ && on_door_.isFunction()) {
+        if (!target->frozen() && !door_triggered_ && on_door_.isFunction()) {
             const Rectangle hb = target->attempted_hitbox();
             bool touching_any = false;
             for (const RoomDoor& door : doors_) {
@@ -364,7 +388,9 @@ void OverworldRoom::draw() {
     }
 
     for (std::size_t i = 0; i < entities_.size(); ++i) {
-        entities_[i]->draw();
+        if (entities_[i]->visible()) {
+            entities_[i]->draw();
+        }
     }
 
     for (const RoomBackground& layer : backgrounds_) {
@@ -374,4 +400,10 @@ void OverworldRoom::draw() {
     }
 
     EndMode2D();
+
+    for (std::size_t i = 0; i < ui_entities_.size(); ++i) {
+        if (ui_entities_[i]->visible()) {
+            ui_entities_[i]->draw();
+        }
+    }
 }

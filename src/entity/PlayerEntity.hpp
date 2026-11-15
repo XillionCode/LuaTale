@@ -14,6 +14,8 @@ public:
     void set_bounds(float max_w, float max_h);
     void set_collider(std::function<bool(Rectangle)> collider);
     void set_debug(bool debug);
+    void set_frozen(bool frozen);
+    bool frozen() const;
 
     float x() const;
     float y() const;
@@ -41,6 +43,7 @@ protected:
 
     bool has_bounds_ = false;
     bool debug_ = false;
+    bool frozen_ = false;
     float bound_w_ = 0.0f;
     float bound_h_ = 0.0f;
     std::function<bool(Rectangle)> collider_;

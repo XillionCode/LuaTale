@@ -13,6 +13,8 @@ public:
     void step() override;
 
     void add_snap_point(float pos);
+    void clear_snap_points();
+    void set_selected(std::size_t index);
     std::size_t get_selected() const;
 
 private:

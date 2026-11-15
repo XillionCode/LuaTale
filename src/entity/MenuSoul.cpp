@@ -14,6 +14,20 @@ void MenuSoul::add_snap_point(float pos) {
     }
 }
 
+void MenuSoul::clear_snap_points() {
+    snap_points_.clear();
+    selected_ = 0;
+}
+
+void MenuSoul::set_selected(std::size_t index) {
+    if (snap_points_.empty()) {
+        selected_ = 0;
+        return;
+    }
+    selected_ = index < snap_points_.size() ? index : 0;
+    apply_snap();
+}
+
 std::size_t MenuSoul::get_selected() const {
     return selected_;
 }

@@ -41,7 +41,7 @@ Engine::~Engine() {
 }
 
 void Engine::set_room(std::shared_ptr<Room> room) {
-    current_room_ = std::move(room);
+    pending_room_ = std::move(room);
 }
 
 void Engine::set_title(const std::string& title) {
@@ -90,6 +90,10 @@ void Engine::register_lua() {
 
 void Engine::run() {
     while (!WindowShouldClose() && !should_quit_) {
+        if (pending_room_) {
+            current_room_ = std::move(pending_room_);
+        }
+
         music_.update();
 
         if (current_room_) {

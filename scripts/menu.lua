@@ -1,4 +1,5 @@
 local naming = require("scripts.naming")
+local player_state = require("scripts.player_state")
 local ruins = require("scripts.ruins")
 
 local M = {}
@@ -75,7 +76,8 @@ function M.go_to_menu()
 
 	local vert = SoulVertMenu(230, 340, 40, -28, font, true)
 	vert:add_option(engine:get_text("instructions_begin"), function()
-		naming.start("", M.go_to_menu, function()
+		naming.start("", M.go_to_menu, function(name)
+			player_state.charname = name
 			music:stop()
 			ruins.enter("room_area1")
 		end)

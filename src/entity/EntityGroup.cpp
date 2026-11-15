@@ -10,20 +10,34 @@ void EntityGroup::add_child(std::shared_ptr<Entity> child) {
     }
 }
 
+void EntityGroup::clear_children() {
+    children_.clear();
+}
+
 void EntityGroup::self_step() {}
 
 void EntityGroup::self_draw() {}
 
 void EntityGroup::step() {
+    if (!active()) {
+        return;
+    }
     self_step();
     for (std::size_t i = 0; i < children_.size(); ++i) {
-        children_[i]->step();
+        if (children_[i]->active()) {
+            children_[i]->step();
+        }
     }
 }
 
 void EntityGroup::draw() {
+    if (!visible()) {
+        return;
+    }
     self_draw();
     for (std::size_t i = 0; i < children_.size(); ++i) {
-        children_[i]->draw();
+        if (children_[i]->visible()) {
+            children_[i]->draw();
+        }
     }
 }

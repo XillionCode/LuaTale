@@ -24,7 +24,12 @@ public:
     ~SoulListMenu() override;
 
     void add_option(const std::string& label, luabridge::LuaRef on_select);
+    void clear_options();
     void set_option_label(std::size_t index, const std::string& label);
+    void set_option_color(std::size_t index, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set_selected(std::size_t index);
+    std::size_t selected() const;
+    void on_move(luabridge::LuaRef callback);
     void set_font(const std::string& font_path);
 
 protected:
@@ -44,4 +49,5 @@ private:
     std::shared_ptr<MenuSoul> soul_;
     std::vector<std::shared_ptr<TextEntity>> labels_;
     std::vector<luabridge::LuaRef> callbacks_;
+    luabridge::LuaRef on_move_{nullptr};
 };
