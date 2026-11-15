@@ -70,7 +70,8 @@ void OverworldFrisk::step() {
         }
     }
 
-    const float move_speed = (debug_ && IsKeyDown(KEY_BACKSPACE)) ? (speed_ * 2.0f) : speed_;
+    const bool speed_boost = debug_ && (IsKeyDown(KEY_BACKSPACE) || IsKeyDown(KEY_TAB));
+    const float move_speed = speed_boost ? (speed_ * 2.0f) : speed_;
     const float prev_x = x_;
     const float prev_y = y_;
     attempted_x_ = x_ + dx * move_speed;
