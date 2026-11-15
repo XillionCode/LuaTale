@@ -199,14 +199,14 @@ function M.use_item(slot)
 	end
 	if M.WEAPONS[id] ~= nil then
 		M.equip_weapon(slot, id)
-		music:play_sfx("ref/snd_item.wav")
+		music:play_sfx("assets/embedded_audio/audio_108.wav")
 	elseif M.ARMORS[id] ~= nil then
 		M.equip_armor(slot, id)
-		music:play_sfx("ref/snd_item.wav")
+		music:play_sfx("assets/embedded_audio/audio_108.wav")
 	elseif M.HEAL_ITEMS[id] ~= nil then
 		M.hp = math.min(M.maxhp, M.hp + M.HEAL_ITEMS[id])
 		M.item_shift(slot)
-		music:play_sfx("ref/snd_heal_c.wav")
+		music:play_sfx("assets/embedded_audio/audio_148.wav")
 	end
 end
 

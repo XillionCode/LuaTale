@@ -34,12 +34,12 @@ function M.attach(room, frisk)
 
 	local status_box = BoxEntity(32, 52, 140, 108, 6)
 	local status_name = make_text(state.charname, 46, 60, font, 32)
-	local status_lv_lbl = make_text("LV", 46, 100, "fnt_small", 18)
-	local status_lv_val = make_text(tostring(state.lv), 86, 100, "fnt_small", 18)
-	local status_hp_lbl = make_text("HP", 46, 118, "fnt_small", 18)
-	local status_hp_val = make_text(state.hp .. "/" .. state.maxhp, 86, 118, "fnt_small", 18)
-	local status_g_lbl = make_text("G", 46, 136, "fnt_small", 18)
-	local status_g_val = make_text(tostring(state.gold), 86, 136, "fnt_small", 18)
+	local status_lv_lbl = make_text("LV", 46, 100, "fnt_small", 32)
+	local status_lv_val = make_text(tostring(state.lv), 86, 100, "fnt_small", 32)
+	local status_hp_lbl = make_text("HP", 46, 118, "fnt_small", 32)
+	local status_hp_val = make_text(state.hp .. "/" .. state.maxhp, 86, 118, "fnt_small", 32)
+	local status_g_lbl = make_text("G", 46, 136, "fnt_small", 32)
+	local status_g_val = make_text(tostring(state.gold), 86, 136, "fnt_small", 32)
 
 	hud_group:add_child(status_box)
 	hud_group:add_child(status_name)
@@ -55,7 +55,7 @@ function M.attach(room, frisk)
 
 	local cmd_menu = SoulVertMenu(84, 188, 36, -28, font, false)
 	cmd_menu:on_move(function()
-		music:play_sfx("ref/snd_squeak.wav")
+		music:play_sfx("assets/embedded_audio/audio_114.wav")
 	end)
 	hud_group:add_child(cmd_menu)
 	room:add_ui_entity(hud_group)
@@ -70,13 +70,13 @@ function M.attach(room, frisk)
 
 	local item_vert = SoulVertMenu(232, 80, 32, -28, font, false)
 	item_vert:on_move(function()
-		music:play_sfx("ref/snd_squeak.wav")
+		music:play_sfx("assets/embedded_audio/audio_114.wav")
 	end)
 	item_group:add_child(item_vert)
 
 	local action_hor = SoulHorMenu(232, 360, 104, -28, font, false)
 	action_hor:on_move(function()
-		music:play_sfx("ref/snd_squeak.wav")
+		music:play_sfx("assets/embedded_audio/audio_114.wav")
 	end)
 	item_group:add_child(action_hor)
 	room:add_ui_entity(item_group)
@@ -116,7 +116,7 @@ function M.attach(room, frisk)
 	room:add_ui_entity(stat_group)
 
 	local function refresh_status()
-		local offset_y = (frisk:y() > room:view_y() + 120) and 270 or 0
+		local offset_y = (frisk:y() > room:view_y() + 130) and 270 or 0
 		status_box:set_pos(32, 52 + offset_y)
 		status_name:set_pos(46, 60 + offset_y)
 		status_name:set_text(state.charname)
@@ -165,7 +165,7 @@ function M.attach(room, frisk)
 			local slot = i
 			item_vert:add_option(state.item_name(state.items[slot]), function()
 				selected_slot = slot
-				music:play_sfx("ref/snd_select.wav")
+				music:play_sfx("assets/embedded_audio/audio_111.wav")
 				set_menu_state(5)
 			end)
 		end
@@ -186,12 +186,12 @@ function M.attach(room, frisk)
 			end
 		end)
 		action_hor:add_option(engine:get_text("item_menu_info"), function()
-			music:play_sfx("ref/snd_select.wav")
+			music:play_sfx("assets/embedded_audio/audio_111.wav")
 			set_menu_state(1)
 		end)
 		action_hor:add_option(engine:get_text("item_menu_drop"), function()
 			state.item_shift(selected_slot)
-			music:play_sfx("ref/snd_squeak.wav")
+			music:play_sfx("assets/embedded_audio/audio_114.wav")
 			if state.item_count() == 0 then
 				set_menu_state(0)
 			else
@@ -202,11 +202,12 @@ function M.attach(room, frisk)
 	end
 
 	local function rebuild_cmd_menu()
+		local prev_idx = cmd_menu:selected()
 		cmd_menu:clear_options()
 		cmd_menu:add_option(engine:get_text("field_menu_item"), function()
 			if state.item_count() > 0 then
 				selected_slot = 1
-				music:play_sfx("ref/snd_select.wav")
+				music:play_sfx("assets/embedded_audio/audio_111.wav")
 				refresh_items()
 				set_menu_state(1)
 			end
@@ -215,15 +216,16 @@ function M.attach(room, frisk)
 			cmd_menu:set_option_color(0, 128, 128, 128, 255)
 		end
 		cmd_menu:add_option(engine:get_text("field_menu_stat"), function()
-			music:play_sfx("ref/snd_select.wav")
+			music:play_sfx("assets/embedded_audio/audio_111.wav")
 			refresh_stat_screen()
 			set_menu_state(2)
 		end)
 		if state.menuchoice[3] then
 			cmd_menu:add_option(engine:get_text("field_menu_cell"), function()
-				music:play_sfx("ref/snd_select.wav")
+				music:play_sfx("assets/embedded_audio/audio_111.wav")
 			end)
 		end
+		cmd_menu:set_selected(prev_idx)
 	end
 
 	set_menu_state = function(next_state)
@@ -262,7 +264,7 @@ function M.attach(room, frisk)
 
 	room:set_key_event("c", function()
 		if menuno == -1 then
-			music:play_sfx("ref/snd_squeak.wav")
+			music:play_sfx("assets/embedded_audio/audio_114.wav")
 			set_menu_state(0)
 		elseif menuno == 0 then
 			set_menu_state(-1)
