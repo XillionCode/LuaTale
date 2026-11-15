@@ -1,7 +1,12 @@
 #include "MenuSoul.hpp"
 
-MenuSoul::MenuSoul(float x, float y, bool vert_lock, bool hor_lock)
-    : Soul(x, y),
+MenuSoul::MenuSoul(float x,
+                   float y,
+                   bool vert_lock,
+                   bool hor_lock,
+                   const std::string& sprite_path,
+                   float scale)
+    : Soul(x, y, sprite_path, scale),
       vert_lock_(vert_lock),
       hor_lock_(hor_lock) {}
 

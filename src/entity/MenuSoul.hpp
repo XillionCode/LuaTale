@@ -3,11 +3,17 @@
 #include "Soul.hpp"
 
 #include <cstddef>
+#include <string>
 #include <vector>
 
 class MenuSoul : public Soul {
 public:
-    MenuSoul(float x = 0.0f, float y = 0.0f, bool vert_lock = false, bool hor_lock = true);
+    MenuSoul(float x = 0.0f,
+             float y = 0.0f,
+             bool vert_lock = false,
+             bool hor_lock = true,
+             const std::string& sprite_path = "assets/Sprites/spr_heartsmall_0.png",
+             float scale = 2.0f);
     ~MenuSoul() override;
 
     void step() override;
