@@ -48,6 +48,12 @@ struct RoomDoor {
     Rectangle rect{};
 };
 
+struct RoomTrigger {
+    std::string name;
+    Rectangle rect{};
+    bool fired = false;
+};
+
 class OverworldRoom : public Room {
 public:
     explicit OverworldRoom(const std::string& json_path);
@@ -58,6 +64,7 @@ public:
 
     void set_follow(std::shared_ptr<PlayerEntity> target);
     void on_door(luabridge::LuaRef callback);
+    void on_trigger(luabridge::LuaRef callback);
     void add_ui_entity(std::shared_ptr<Entity> entity);
     void clear_ui_entities();
     bool collides(Rectangle hitbox) const;
@@ -80,10 +87,12 @@ private:
     std::vector<Rectangle> solid_walls_;
     std::vector<SlopeWall> slope_walls_;
     std::vector<RoomDoor> doors_;
+    std::vector<RoomTrigger> triggers_;
     std::vector<std::shared_ptr<Entity>> ui_entities_;
     std::unordered_map<std::string, Vector2> markers_;
     std::weak_ptr<PlayerEntity> follow_target_;
     std::optional<luabridge::LuaRef> on_door_;
+    std::optional<luabridge::LuaRef> on_trigger_;
     bool door_armed_ = false;
     bool door_triggered_ = false;
     float room_width_ = 320.0f;

@@ -4,18 +4,27 @@ SpriteEntity::SpriteEntity(const std::string& sprite_path, float x, float y, flo
     : x_(x),
       y_(y),
       scale_(scale > 0.0f ? scale : 1.0f) {
+    set_texture(sprite_path);
+}
+
+SpriteEntity::~SpriteEntity() {
+    if (loaded_) {
+        UnloadTexture(texture_);
+    }
+}
+
+void SpriteEntity::set_texture(const std::string& sprite_path) {
+    if (loaded_) {
+        UnloadTexture(texture_);
+        texture_ = Texture2D{};
+        loaded_ = false;
+    }
     if (!sprite_path.empty()) {
         texture_ = LoadTexture(sprite_path.c_str());
         loaded_ = texture_.id != 0;
         if (loaded_) {
             SetTextureFilter(texture_, TEXTURE_FILTER_POINT);
         }
-    }
-}
-
-SpriteEntity::~SpriteEntity() {
-    if (loaded_) {
-        UnloadTexture(texture_);
     }
 }
 
@@ -40,6 +49,14 @@ float SpriteEntity::x() const {
 
 float SpriteEntity::y() const {
     return y_;
+}
+
+float SpriteEntity::width() const {
+    return loaded_ ? static_cast<float>(texture_.width) * scale_ : 0.0f;
+}
+
+float SpriteEntity::height() const {
+    return loaded_ ? static_cast<float>(texture_.height) * scale_ : 0.0f;
 }
 
 void SpriteEntity::set_tint(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {

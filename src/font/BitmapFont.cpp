@@ -65,7 +65,8 @@ void BitmapFont::draw_text(const std::string& text,
                            bool centered,
                            bool shake,
                            Color color,
-                           float rotation) const {
+                           float rotation,
+                           const std::vector<TextColorRun>* color_runs) const {
     if (!loaded_) {
         return;
     }
@@ -95,16 +96,26 @@ void BitmapFont::draw_text(const std::string& text,
 
         float cursor_x = centered ? (x - line_width * 0.5f) : x;
         for (std::size_t i = line_start; i < line_end;) {
+            const std::size_t char_idx = i;
             int cp = next_utf8(text, i);
             auto it = glyphs_.find(cp);
             if (it != glyphs_.end()) {
+                Color draw_color = color;
+                if (color_runs && color_runs->size() > 1) {
+                    for (const TextColorRun& run : *color_runs) {
+                        if (char_idx >= run.start && char_idx < run.start + run.length) {
+                            draw_color = run.color;
+                            break;
+                        }
+                    }
+                }
                 const BitmapGlyph& g = it->second;
                 float dx = shake ? static_cast<float>(GetRandomValue(-1, 1)) : 0.0f;
                 float dy = shake ? static_cast<float>(GetRandomValue(-1, 1)) : 0.0f;
                 Rectangle src{g.src_x, g.src_y, g.src_w, g.src_h};
                 Rectangle dst{x, y, g.src_w * scale, g.src_h * scale};
                 Vector2 origin{-(cursor_x + g.offset * scale + dx - x), -(cursor_y + dy - y)};
-                DrawTexturePro(texture_, src, dst, origin, rotation, color);
+                DrawTexturePro(texture_, src, dst, origin, rotation, draw_color);
                 cursor_x += (hspace > 0.0f) ? hspace : (g.shift * scale);
             }
         }

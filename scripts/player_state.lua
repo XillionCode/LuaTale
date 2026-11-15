@@ -12,6 +12,7 @@ local M = {
 	xp = 0,
 	lv = 1,
 	kills = 0,
+	plot = 0,
 	items = { 0, 0, 0, 0, 0, 0, 0, 0 },
 	phone = { 0, 0, 0, 0, 0, 0, 0, 0 },
 	menuchoice = { true, true, false },

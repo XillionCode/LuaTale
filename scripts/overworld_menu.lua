@@ -263,7 +263,7 @@ function M.attach(room, frisk)
 	end
 
 	room:set_key_event("c", function()
-		if menuno == -1 then
+		if menuno == -1 and not frisk:frozen() then
 			music:play_sfx("assets/embedded_audio/audio_114.wav")
 			set_menu_state(0)
 		elseif menuno == 0 then

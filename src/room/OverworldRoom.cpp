@@ -1,5 +1,6 @@
 #include "OverworldRoom.hpp"
 #include "entity/Entity.hpp"
+#include "entity/NPCEntity.hpp"
 #include "entity/PlayerEntity.hpp"
 
 #include <algorithm>
@@ -200,8 +201,18 @@ bool OverworldRoom::load_room(const std::string& json_path) {
                        std::strcmp(obj, "obj_demodoorA") == 0 ||
                        std::strcmp(obj, "obj_finaldoor") == 0) {
                 doors_.push_back({obj, rect});
-            } else if (std::strncmp(obj, "obj_marker", 10) == 0) {
-                markers_[obj] = Vector2{x, y};
+            } else if (std::strncmp(obj, "obj_marker", 10) == 0 ||
+                       std::strcmp(obj, "obj_npc_marker") == 0 ||
+                       std::strcmp(obj, "obj_floweytalker1") == 0) {
+                if (markers_.find(obj) == markers_.end()) {
+                    markers_[obj] = Vector2{x, y};
+                }
+            } else if (std::strstr(obj, "trigger") != nullptr) {
+                Rectangle trect = rect;
+                if (std::strcmp(obj, "obj_floweytrigger") == 0) {
+                    trect.width = rect.width * 50.0f;
+                }
+                triggers_.push_back({obj, trect, false});
             }
         }
     }
@@ -230,6 +241,14 @@ void OverworldRoom::on_door(luabridge::LuaRef callback) {
     }
 }
 
+void OverworldRoom::on_trigger(luabridge::LuaRef callback) {
+    if (callback.isFunction()) {
+        on_trigger_ = std::move(callback);
+    } else {
+        on_trigger_.reset();
+    }
+}
+
 float OverworldRoom::marker_x(const std::string& name) const {
     auto it = markers_.find(name);
     return it != markers_.end() ? it->second.x : spawn_x_;
@@ -249,6 +268,13 @@ bool OverworldRoom::collides(Rectangle hitbox) const {
     for (const SlopeWall& slope : slope_walls_) {
         if (collides_slope(hitbox, slope)) {
             return true;
+        }
+    }
+    for (const auto& ent : entities_) {
+        if (auto npc = std::dynamic_pointer_cast<NPCEntity>(ent)) {
+            if (npc->active() && npc->solid() && CheckCollisionRecs(hitbox, npc->hitbox())) {
+                return true;
+            }
         }
     }
     return false;
@@ -304,6 +330,20 @@ void OverworldRoom::step() {
         const float max_y = std::max(0.0f, room_height_ - 240.0f);
         camera_.target.x = std::clamp(cx - 160.0f, 0.0f, max_x);
         camera_.target.y = std::clamp(cy - 120.0f, 0.0f, max_y);
+
+        if (!target->frozen() && on_trigger_ && on_trigger_->isFunction()) {
+            const Rectangle hb = target->hitbox();
+            for (RoomTrigger& trig : triggers_) {
+                if (!trig.fired && CheckCollisionRecs(hb, trig.rect)) {
+                    trig.fired = true;
+                    auto res = (*on_trigger_)(trig.name);
+                    if (!res) {
+                        std::cerr << "OverworldRoom on_trigger error: " << res.errorMessage() << '\n';
+                    }
+                    break;
+                }
+            }
+        }
 
         if (!target->frozen() && !door_triggered_ && on_door_ && on_door_->isFunction()) {
             const Rectangle hb = target->attempted_hitbox();

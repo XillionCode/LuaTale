@@ -1,10 +1,12 @@
 #pragma once
 
 #include "BitmapFontLoader.hpp"
+#include "text/Parser.hpp"
 
 #include <raylib.h>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class BitmapFont {
 public:
@@ -27,7 +29,8 @@ public:
                    bool centered,
                    bool shake,
                    Color color,
-                   float rotation = 0.0f) const;
+                   float rotation = 0.0f,
+                   const std::vector<TextColorRun>* color_runs = nullptr) const;
 
 private:
     Texture2D texture_{};

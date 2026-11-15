@@ -28,7 +28,7 @@ RoomCutscene::RoomCutscene(const std::string& image_path,
     add_entity(image_);
 
     if (!text.empty()) {
-        text_ = std::make_shared<TextEntity>(text, text_x, text_y, font_path, sfx_path);
+        text_ = std::make_shared<TextEntity>(text, text_x, text_y, font_path, sfx_path, 32.0f, 2);
         add_entity(text_);
     }
 }

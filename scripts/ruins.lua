@@ -1,4 +1,5 @@
 local overworld_menu = require("scripts.overworld_menu")
+local player_state = require("scripts.player_state")
 
 local M = {}
 
@@ -112,6 +113,45 @@ function M.enter(room_name, marker_name)
 	room:add_entity(frisk)
 	room:set_follow(frisk)
 	overworld_menu.attach(room, frisk)
+
+	if room_name == "room_area1_2" and player_state.plot == 0 then
+		local fx = room:marker_x("obj_floweytalker1")
+		local fy = room:marker_y("obj_floweytalker1")
+		local flowey = NPCEntity("assets/Sprites/spr_flowey_0.png", fx, fy, 1.0)
+		flowey:add_frame("assets/Sprites/spr_flowey_1.png")
+		flowey:set_solid(true)
+		room:add_entity(flowey)
+
+		room:on_trigger(function(trig_name)
+			if trig_name == "obj_floweytrigger" and player_state.plot == 0 then
+				frisk:set_frozen(true)
+				music:start_song("ref/mus_flowey.ogg")
+				music:set_volume(1.0)
+
+				local font = engine:language() == "ja" and "fnt_ja_maintext" or "fnt_maintext"
+				local top_side = frisk:y() > room:view_y() + 130
+				local dlg = DialogueEntity(top_side, true, font, "assets/embedded_audio/audio_97.wav", 32, 1)
+				dlg:set_portrait(0, "assets/Sprites/spr_floweynice_0.png", "assets/Sprites/spr_floweynice_1.png")
+				dlg:set_portrait(1, "assets/Sprites/spr_floweynicesideum_0.png", "assets/Sprites/spr_floweynicesideum_1.png")
+				dlg:set_portrait(2, "assets/Sprites/spr_floweysassy_0.png", "assets/Sprites/spr_floweysassy_1.png")
+				dlg:set_portrait(3, "assets/Sprites/spr_floweypissed_0.png", "assets/Sprites/spr_floweypissed_1.png")
+				dlg:set_portrait(4, "assets/Sprites/spr_floweyevil_0.png", "assets/Sprites/spr_floweyevil_1.png")
+				dlg:set_portrait(5, "assets/Sprites/spr_floweygrin_0.png", "assets/Sprites/spr_floweygrin_1.png")
+
+				local text = ""
+				for i = 291, 297 do
+					text = text .. engine:get_text("SCR_TEXT_" .. i)
+				end
+				dlg:set_text(text)
+				dlg:on_done(function()
+					player_state.plot = 1
+					frisk:set_frozen(false)
+					update_music(room_name)
+				end)
+				room:add_ui_entity(dlg)
+			end
+		end)
+	end
 	room:on_door(function(door_name)
 		local next_room, next_marker = resolve_door(room_name, door_name)
 		if next_room then

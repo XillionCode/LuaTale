@@ -13,8 +13,11 @@ public:
     void draw() override;
 
     void set_pos(float x, float y);
+    void set_texture(const std::string& sprite_path);
     float x() const;
     float y() const;
+    float width() const;
+    float height() const;
     void set_tint(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
 protected:

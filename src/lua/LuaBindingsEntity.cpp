@@ -1,7 +1,9 @@
 #include "LuaBindings.hpp"
 #include "entity/BattleSoul.hpp"
 #include "entity/BoxEntity.hpp"
+#include "entity/DialogueEntity.hpp"
 #include "entity/Entity.hpp"
+#include "entity/NPCEntity.hpp"
 #include "entity/EntityGroup.hpp"
 #include "entity/FadeOverlayEntity.hpp"
 #include "entity/ImageEntity.hpp"
@@ -72,9 +74,34 @@ void register_entity_bindings(lua_State* lua) {
         .deriveClass<SpriteEntity, Entity>("SpriteEntity")
         .addConstructorFrom<std::shared_ptr<SpriteEntity>, void(const std::string&, float, float, float)>()
         .addFunction("set_pos", &SpriteEntity::set_pos)
+        .addFunction("set_texture", &SpriteEntity::set_texture)
         .addFunction("x", &SpriteEntity::x)
         .addFunction("y", &SpriteEntity::y)
+        .addFunction("width", &SpriteEntity::width)
+        .addFunction("height", &SpriteEntity::height)
         .addFunction("set_tint", &SpriteEntity::set_tint)
+        .endClass()
+        .deriveClass<NPCEntity, SpriteEntity>("NPCEntity")
+        .addConstructorFrom<std::shared_ptr<NPCEntity>, void(const std::string&, float, float, float)>()
+        .addFunction("add_frame", &NPCEntity::add_frame)
+        .addFunction("set_frame", &NPCEntity::set_frame)
+        .addFunction("set_anim_speed", &NPCEntity::set_anim_speed)
+        .addFunction("set_solid", &NPCEntity::set_solid)
+        .addFunction("solid", &NPCEntity::solid)
+        .addFunction("on_interact", &NPCEntity::on_interact)
+        .addFunction("walk_to", &NPCEntity::walk_to)
+        .endClass()
+        .deriveClass<DialogueEntity, EntityGroup>("DialogueEntity")
+        .addConstructorFrom<std::shared_ptr<DialogueEntity>,
+                            void(bool, bool, const std::string&, const std::string&, float, int)>()
+        .addFunction("set_text", &DialogueEntity::set_text)
+        .addFunction("add_page", &DialogueEntity::add_page)
+        .addFunction("set_has_portrait", &DialogueEntity::set_has_portrait)
+        .addFunction("set_top_side", &DialogueEntity::set_top_side)
+        .addFunction("set_portrait", &DialogueEntity::set_portrait)
+        .addFunction("on_emote", &DialogueEntity::on_emote)
+        .addFunction("on_done", &DialogueEntity::on_done)
+        .addFunction("is_done", &DialogueEntity::is_done)
         .endClass()
         .deriveClass<Soul, SpriteEntity>("Soul")
         .addConstructorFrom<std::shared_ptr<Soul>, void(float, float, const std::string&, float)>()
@@ -98,7 +125,11 @@ void register_entity_bindings(lua_State* lua) {
         .addConstructorFrom<std::shared_ptr<TextEntity>,
                             void(const std::string&, float, float, const std::string&, const std::string&, float, int)>()
         .addFunction("is_finished", &TextEntity::is_finished)
+        .addFunction("is_typing", &TextEntity::is_typing)
+        .addFunction("current_emote", &TextEntity::current_emote)
         .addFunction("skip", &TextEntity::skip)
+        .addFunction("restart", &TextEntity::restart)
+        .addFunction("on_emote", &TextEntity::on_emote)
         .addFunction("set_font_size", &TextEntity::set_font_size)
         .addFunction("set_font", &TextEntity::set_font)
         .addFunction("set_centered", &TextEntity::set_centered)

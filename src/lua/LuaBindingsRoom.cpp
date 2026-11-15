@@ -40,6 +40,7 @@ void register_room_bindings(lua_State* lua) {
         .addConstructorFrom<std::shared_ptr<OverworldRoom>, void(const std::string&)>()
         .addFunction("set_follow", &OverworldRoom::set_follow)
         .addFunction("on_door", &OverworldRoom::on_door)
+        .addFunction("on_trigger", &OverworldRoom::on_trigger)
         .addFunction("add_ui_entity", &OverworldRoom::add_ui_entity)
         .addFunction("clear_ui_entities", &OverworldRoom::clear_ui_entities)
         .addFunction("marker_x", &OverworldRoom::marker_x)
