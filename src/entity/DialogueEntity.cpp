@@ -121,7 +121,8 @@ void DialogueEntity::update_portrait_sprite(bool force) {
         mouth_timer_ = 0;
     }
 
-    if (!force && emote == last_emote_ && mouth_open == last_mouth_open_) {
+    const bool mouth_changed = (mouth_open != last_mouth_open_);
+    if (!force && emote == last_emote_ && !mouth_changed) {
         return;
     }
 
@@ -132,13 +133,27 @@ void DialogueEntity::update_portrait_sprite(bool force) {
         active_portrait_path_ = next_path;
         portrait_->set_texture(active_portrait_path_);
     }
+    if ((force || mouth_changed) && on_mouth_change_ && on_mouth_change_->isFunction()) {
+        auto res = (*on_mouth_change_)(mouth_open);
+        if (!res) {
+            std::cerr << "DialogueEntity on_mouth_change error: " << res.errorMessage() << '\n';
+        }
+    }
 }
 
 void DialogueEntity::on_emote(luabridge::LuaRef callback) {
-    if (callback.isFunction()) {
+    if (callback.state() != nullptr && callback.isFunction()) {
         on_emote_ = std::move(callback);
     } else {
         on_emote_.reset();
+    }
+}
+
+void DialogueEntity::on_mouth_change(luabridge::LuaRef callback) {
+    if (callback.state() != nullptr && callback.isFunction()) {
+        on_mouth_change_ = std::move(callback);
+    } else {
+        on_mouth_change_.reset();
     }
 }
 

@@ -32,6 +32,7 @@ public:
     void set_top_side(bool top_side);
     void set_portrait(int32_t emote_id, const std::string& closed_path, const std::string& open_path = "");
     void on_emote(luabridge::LuaRef callback);
+    void on_mouth_change(luabridge::LuaRef callback);
     void on_done(luabridge::LuaRef callback);
     bool is_done() const;
 
@@ -66,5 +67,6 @@ private:
     std::string active_portrait_path_;
 
     std::optional<luabridge::LuaRef> on_emote_;
+    std::optional<luabridge::LuaRef> on_mouth_change_;
     std::optional<luabridge::LuaRef> on_done_;
 };

@@ -143,7 +143,11 @@ function M.enter(room_name, marker_name)
 					text = text .. engine:get_text("SCR_TEXT_" .. i)
 				end
 				dlg:set_text(text)
+				dlg:on_mouth_change(function(open)
+					flowey:set_frame(open and 1 or 0)
+				end)
 				dlg:on_done(function()
+					flowey:set_frame(0)
 					player_state.plot = 1
 					frisk:set_frozen(false)
 					update_music(room_name)

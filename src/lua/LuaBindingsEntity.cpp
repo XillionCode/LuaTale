@@ -103,6 +103,7 @@ void register_entity_bindings(lua_State* lua) {
         .addFunction("set_top_side", &DialogueEntity::set_top_side)
         .addFunction("set_portrait", &DialogueEntity::set_portrait)
         .addFunction("on_emote", &DialogueEntity::on_emote)
+        .addFunction("on_mouth_change", &DialogueEntity::on_mouth_change)
         .addFunction("on_done", &DialogueEntity::on_done)
         .addFunction("is_done", &DialogueEntity::is_done)
         .endClass()
